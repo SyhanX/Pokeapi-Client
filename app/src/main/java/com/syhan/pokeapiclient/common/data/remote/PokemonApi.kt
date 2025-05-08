@@ -1,6 +1,6 @@
 package com.syhan.pokeapiclient.common.data.remote
 
-import com.syhan.pokeapiclient.common.domain.model.Pokemon
+import com.syhan.pokeapiclient.common.domain.model.PokemonShortInfo
 import com.syhan.pokeapiclient.common.domain.model.PokemonResultList
 import retrofit2.Response
 import retrofit2.http.GET
@@ -11,7 +11,7 @@ interface PokemonApi {
     @GET("/api/v2/pokemon/{id}/")
     suspend fun getPokemonById(
         @Path("id") id: Int,
-    ) : Response<Pokemon>
+    ) : Response<PokemonShortInfo>
 
     @GET("/api/v2/pokemon/")
     suspend fun getMultiplePokemon(

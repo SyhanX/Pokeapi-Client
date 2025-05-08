@@ -6,14 +6,9 @@ import kotlinx.serialization.Serializable
 
 @Immutable
 @Serializable
-data class PokemonShortInfo(
-    val name: String,
-    val sprites: Sprites,
-)
-
-@Immutable
-@Serializable
 data class Sprites(
     @SerialName("front_default")
     val frontDefault: String? = null,
+    @SerialName("front_shiny")
+    val frontShiny: String? = null
 )

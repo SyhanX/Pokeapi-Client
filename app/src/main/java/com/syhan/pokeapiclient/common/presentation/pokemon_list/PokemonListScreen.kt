@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.syhan.pokeapiclient.common.presentation.components.PokemonCard
-import com.syhan.pokeapiclient.common.presentation.pokemon_details.PokemonDetailsState
+import com.syhan.pokeapiclient.common.presentation.pokemon_details.PokemonShortDetailsState
 import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -48,7 +48,7 @@ fun PokemonListContent(
         ) {
             items(
                 items = state.list,
-                key = { pokemon: PokemonDetailsState ->
+                key = { pokemon: PokemonShortDetailsState ->
                     pokemon.name
                 }
             ) {

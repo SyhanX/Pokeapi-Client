@@ -7,7 +7,7 @@ import com.syhan.pokeapiclient.common.data.NetworkErrorType
 import com.syhan.pokeapiclient.common.data.NetworkResponse
 import com.syhan.pokeapiclient.common.domain.model.PokemonResultList
 import com.syhan.pokeapiclient.common.domain.repository.PokemonRepository
-import com.syhan.pokeapiclient.common.presentation.pokemon_details.PokemonDetailsState
+import com.syhan.pokeapiclient.common.presentation.pokemon_details.PokemonShortDetailsState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +30,7 @@ class PokemonListViewModel(
 
     private val basePokemonUrl = "https://pokeapi.co/api/v2/pokemon/"
 
-    private val detailsList = mutableListOf<PokemonDetailsState>()
+    private val detailsList = mutableListOf<PokemonShortDetailsState>()
 
     init {
         viewModelScope.launch {
@@ -80,7 +80,7 @@ class PokemonListViewModel(
                         } else it.toString()
                     }
                     detailsList.add(
-                        PokemonDetailsState(
+                        PokemonShortDetailsState(
                             name = capitalizedName,
                             sprites = pokemon.sprites
                         )
