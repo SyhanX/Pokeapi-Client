@@ -1,5 +1,6 @@
 package com.syhan.pokeapiclient.common.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -13,38 +14,33 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
-import com.syhan.pokeapiclient.R
 import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
 
-@OptIn(ExperimentalCoilApi::class)
+private const val TAG = "PokemonCard"
 @Composable
 fun PokemonCard(
     name: String,
-    image: String,
-    types: List<String>
+    sprite: String,
 ) {
+    Log.d(TAG, "PokemonCard: $name and \n $sprite")
     Card {
         Column(
             modifier = Modifier
                 .padding(12.dp)
         ) {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(image)
-                    .crossfade(true)
-                    .build(),
+                model = sprite,
                 contentDescription = null,
-                error = painterResource(R.drawable.pinkachu),
+                contentScale = ContentScale.Fit,
+                onError = {
+                    Log.d(TAG, "PokemonCard: there has been an error")
+                },
                 modifier = Modifier
                     .background(
                         color = if (isSystemInDarkTheme()) {
@@ -66,16 +62,13 @@ fun PokemonCard(
     }
 }
 
-
-@OptIn(ExperimentalCoilApi::class)
 @PreviewLightDark
 @Composable
 private fun PokemonCardPreview() {
     PokeapiClientTheme {
         PokemonCard(
             name = "Pinkachu",
-            image = "3",
-            types = emptyList()
+            sprite = "3",
         )
     }
 }
