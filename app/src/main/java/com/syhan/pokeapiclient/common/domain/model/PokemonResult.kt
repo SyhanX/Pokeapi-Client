@@ -1,19 +1,18 @@
 package com.syhan.pokeapiclient.common.domain.model
 
 import androidx.compose.runtime.Immutable
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+
 
 @Immutable
 @Serializable
-data class PokemonShortInfo(
+data class PokemonResult(
     val name: String,
-    val sprites: Sprites,
+    val url: String,
 )
 
 @Immutable
 @Serializable
-data class Sprites(
-    @SerialName("front_default")
-    val frontDefault: String? = null,
+data class PokemonResultList(
+    val results: List<PokemonResult>
 )
