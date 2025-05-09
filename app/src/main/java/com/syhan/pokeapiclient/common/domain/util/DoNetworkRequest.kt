@@ -1,8 +1,8 @@
 package com.syhan.pokeapiclient.common.domain.util
 
 import android.util.Log
-import com.syhan.pokeapiclient.common.data.NetworkErrorType
-import com.syhan.pokeapiclient.common.data.NetworkResponse
+import com.syhan.pokeapiclient.common.domain.NetworkErrorType
+import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

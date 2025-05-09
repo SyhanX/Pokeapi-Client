@@ -2,8 +2,8 @@ package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.syhan.pokeapiclient.common.data.NetworkErrorType
-import com.syhan.pokeapiclient.common.data.NetworkResponse
+import com.syhan.pokeapiclient.common.domain.NetworkErrorType
+import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.PokemonResultList
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
 import com.syhan.pokeapiclient.common.domain.util.doSimpleNetworkRequest

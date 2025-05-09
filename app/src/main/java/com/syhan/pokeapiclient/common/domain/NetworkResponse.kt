@@ -1,4 +1,4 @@
-package com.syhan.pokeapiclient.common.data
+package com.syhan.pokeapiclient.common.domain
 
 sealed interface NetworkResponse {
     data object Loading: NetworkResponse
