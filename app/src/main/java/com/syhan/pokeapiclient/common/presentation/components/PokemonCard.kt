@@ -27,9 +27,12 @@ private const val TAG = "PokemonCard"
 fun PokemonCard(
     name: String,
     sprite: String,
+    onClick: () -> Unit,
 ) {
     Log.d(TAG, "PokemonCard: $name and \n $sprite")
-    Card {
+    Card(
+        onClick = onClick
+    ) {
         Column(
             modifier = Modifier
                 .padding(12.dp)
@@ -69,6 +72,7 @@ private fun PokemonCardPreview() {
         PokemonCard(
             name = "Pinkachu",
             sprite = "3",
+            onClick = {}
         )
     }
 }

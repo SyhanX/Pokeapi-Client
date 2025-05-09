@@ -5,7 +5,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.syhan.pokeapiclient.common.data.NavDestinations
+import com.syhan.pokeapiclient.common.presentation.pokemon_details.PokemonDetailsScreen
 import com.syhan.pokeapiclient.common.presentation.pokemon_list.PokemonListScreen
 
 @Composable
@@ -27,10 +29,11 @@ fun AppContent(navController: NavHostController) {
             )
         }
 
-     /*   composable<NavDestinations.PokemonDetailsScreen> {
-            PokemonDetailsScreen() {
-                navController.navigate(NavDestinations.PokemonListScreen)
-            }
-        }*/
+        composable<NavDestinations.PokemonDetailsScreen> {
+            val args = it.toRoute<NavDestinations.PokemonDetailsScreen>()
+            PokemonDetailsScreen(
+
+            )
+        }
     }
 }

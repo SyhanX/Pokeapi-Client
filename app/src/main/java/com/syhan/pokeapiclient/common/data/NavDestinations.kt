@@ -8,6 +8,8 @@ sealed interface NavDestinations {
     data object PokemonListScreen : NavDestinations
 
     @Serializable
-    data object PokemonDetailsScreen : NavDestinations
+    data class PokemonDetailsScreen(
+        val currentPokemonId: Int,
+    ) : NavDestinations
 
 }

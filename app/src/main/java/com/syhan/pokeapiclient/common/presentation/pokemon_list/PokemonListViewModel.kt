@@ -1,12 +1,12 @@
 package com.syhan.pokeapiclient.common.presentation.pokemon_list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syhan.pokeapiclient.common.data.NetworkErrorType
 import com.syhan.pokeapiclient.common.data.NetworkResponse
 import com.syhan.pokeapiclient.common.domain.model.PokemonResultList
 import com.syhan.pokeapiclient.common.domain.repository.PokemonRepository
+import com.syhan.pokeapiclient.common.domain.util.doSimpleNetworkRequest
 import com.syhan.pokeapiclient.common.presentation.pokemon_details.PokemonShortDetailsState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,18 +28,13 @@ class PokemonListViewModel(
     private val _networkState = MutableStateFlow<NetworkResponse>(NetworkResponse.Loading)
     val networkState = _networkState.asStateFlow()
 
-    private val basePokemonUrl = "https://pokeapi.co/api/v2/pokemon/"
-
     private val detailsList = mutableListOf<PokemonShortDetailsState>()
 
     init {
         viewModelScope.launch {
             val list = getPokemonList()
-            list?.let {
-                getDetailedPokemonInfo(it)
-                _listState.value = listState.value.copy(
-                    list = detailsList
-                )
+            list?.let { result ->
+                loadShortPokemonInfo(result)
             }
         }
     }
@@ -56,45 +51,42 @@ class PokemonListViewModel(
             _networkState.value = NetworkResponse.Error(NetworkErrorType.NoInternetError)
             return@withContext null
         } catch (e: HttpException) {
-            _networkState.value = NetworkResponse.Error(NetworkErrorType.UnexpectedError)
+            _networkState.value = NetworkResponse.Error(NetworkErrorType.UnexpectedNetworkError)
             return@withContext null
         }
     }
 
-    private suspend fun getDetailedPokemonInfo(list: PokemonResultList) {
-        _networkState.value = NetworkResponse.Loading
-        Log.d(TAG, "getDetailedPokemonInfo: trying to load")
-        try {
+    private fun loadShortPokemonInfo(list: PokemonResultList) {
+        doSimpleNetworkRequest(_networkState, viewModelScope) {
             val pokemonIdList = list.results.map { result ->
-                result.url.removePrefix(basePokemonUrl).removeSuffix("/")
+                /*trimming the url so that it only returns the id of a pokemon*/
+                result.url
+                    .removePrefix("https://pokeapi.co/api/v2/pokemon/")
+                    .removeSuffix("/")
+                    .toInt()
             }
-            Log.d(TAG, "ids: $pokemonIdList")
             pokemonIdList.forEach { id ->
-                val response = repository.getPokemonById(id.toInt())
+                val response = repository.getShortPokemonById(id)
                 val body = response.body()
 
                 body?.let { pokemon ->
                     val capitalizedName = pokemon.name.replaceFirstChar {
-                        if (it.isLowerCase()) {
-                            it.uppercase()
-                        } else it.toString()
+                        if (it.isLowerCase()) it.uppercase()
+                        else it.toString()
                     }
+
                     detailsList.add(
                         PokemonShortDetailsState(
+                            id = pokemon.id,
                             name = capitalizedName,
                             sprites = pokemon.sprites
                         )
                     )
                 }
             }
-            Log.d(TAG, "detailedlist: $detailsList")
-            _networkState.value = NetworkResponse.Success
-            Log.d(TAG, "getDetailedPokemonInfo: loaded successfully")
-        } catch (e: IOException) {
-            _networkState.value = NetworkResponse.Error(NetworkErrorType.NoInternetError)
-        } catch (e: Exception) {
-            _networkState.value = NetworkResponse.Error(NetworkErrorType.UnexpectedError)
+            _listState.value = listState.value.copy(
+                list = detailsList
+            )
         }
-
     }
 }

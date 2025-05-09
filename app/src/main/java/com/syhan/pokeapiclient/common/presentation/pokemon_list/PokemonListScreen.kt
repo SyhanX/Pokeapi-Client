@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.syhan.pokeapiclient.common.data.NavDestinations
 import com.syhan.pokeapiclient.common.presentation.components.PokemonCard
 import com.syhan.pokeapiclient.common.presentation.pokemon_details.PokemonShortDetailsState
 import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
@@ -28,15 +29,20 @@ fun PokemonListScreen(
     val state = viewModel.listState.collectAsStateWithLifecycle()
     val networkState = viewModel.networkState.collectAsStateWithLifecycle()
 
-    Log.d(TAG, "PokemonListScreen: $networkState")
     PokemonListContent(
-        state = state.value
+        state = state.value,
+        onCardClick = { id ->
+            navController.navigate(
+                NavDestinations.PokemonDetailsScreen(id)
+            )
+        }
     )
 }
 
 @Composable
 fun PokemonListContent(
     state: PokemonListState,
+    onCardClick: (id: Int) -> Unit,
 ) {
     Scaffold { innerPadding ->
         LazyColumn(
@@ -54,7 +60,11 @@ fun PokemonListContent(
             ) {
                 PokemonCard(
                     name = it.name,
-                    sprite = it.sprites.frontDefault ?: ""
+                    sprite = it.sprites.frontDefault ?: "",
+                    onClick = {
+                        Log.d(TAG, "PokemonListContent: clicked on ${it.id}")
+                        onCardClick(it.id)
+                    }
                 )
             }
         }

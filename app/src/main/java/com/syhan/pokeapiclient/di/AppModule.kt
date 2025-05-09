@@ -1,9 +1,11 @@
 package com.syhan.pokeapiclient.di
 
+import androidx.lifecycle.SavedStateHandle
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.syhan.pokeapiclient.common.data.remote.PokemonApi
 import com.syhan.pokeapiclient.common.data.repository.PokemonRepositoryImpl
 import com.syhan.pokeapiclient.common.domain.repository.PokemonRepository
+import com.syhan.pokeapiclient.common.presentation.pokemon_details.PokemonDetailsViewModel
 import com.syhan.pokeapiclient.common.presentation.pokemon_list.PokemonListViewModel
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -37,5 +39,9 @@ val appModule = module {
 
     viewModel {
         PokemonListViewModel(get())
+    }
+
+    viewModel { (handle: SavedStateHandle) ->
+        PokemonDetailsViewModel(get(), handle)
     }
 }
