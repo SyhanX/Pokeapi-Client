@@ -1,12 +1,11 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
-import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
 import com.syhan.pokeapiclient.common.domain.util.doSimpleNetworkRequest
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -26,14 +25,16 @@ class PokemonDetailsViewModel(
     private val currentPokemonId = savedStateHandle.get<Int>("currentPokemonId")
 
     init {
+        loadData()
+    }
+
+    fun loadData() {
         currentPokemonId?.let { id ->
             if (id != -1) {
                 getFullPokemonInfo(id)
             }
         }
-        Log.d(TAG, "init: $currentPokemonId")
     }
-
     private fun getFullPokemonInfo(id: Int) {
         doSimpleNetworkRequest(_networkState, viewModelScope) {
             val response = repository.getFullPokemonById(id)

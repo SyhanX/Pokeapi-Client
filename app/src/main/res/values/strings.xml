@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Pokeapi Client</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="http_error">An unexpected network error occurred</string>
+    <string name="unknown_error">An unknown error occurred</string>
+    <string name="try_again">Try again</string>
+    <string name="no_internet_description">I pay 1400 rubles monthly for a 500 mbit/sec internet and for some inexplicable reason it doesn\'t work properly</string>
 </resources>

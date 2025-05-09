@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syhan.pokeapiclient.common.domain.NetworkErrorType
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
+import com.syhan.pokeapiclient.common.domain.util.doSimpleNetworkRequest
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.PokemonResultList
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
-import com.syhan.pokeapiclient.common.domain.util.doSimpleNetworkRequest
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonShortDetailsState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,10 +31,13 @@ class PokemonListViewModel(
     private val detailsList = mutableListOf<PokemonShortDetailsState>()
 
     init {
+        loadData()
+    }
+
+    fun loadData() {
         viewModelScope.launch {
-            val list = getPokemonList()
-            list?.let { result ->
-                loadShortPokemonInfo(result)
+            getPokemonList()?.let { result ->
+                getShortPokemonInfo(result)
             }
         }
     }
@@ -56,7 +59,7 @@ class PokemonListViewModel(
         }
     }
 
-    private fun loadShortPokemonInfo(list: PokemonResultList) {
+    private fun getShortPokemonInfo(list: PokemonResultList) {
         doSimpleNetworkRequest(_networkState, viewModelScope) {
             val pokemonIdList = list.results.map { result ->
                 /*trimming the url so that it only returns the id of a pokemon*/

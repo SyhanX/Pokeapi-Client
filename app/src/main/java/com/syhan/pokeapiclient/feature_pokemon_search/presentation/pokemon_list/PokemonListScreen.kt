@@ -14,9 +14,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.syhan.pokeapiclient.common.data.NavDestinations
+import com.syhan.pokeapiclient.common.presentation.ConnectionHandlingScreen
+import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonCard
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonShortDetailsState
-import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
 import org.koin.androidx.compose.koinViewModel
 
 private const val TAG = "PokemonListScreen"
@@ -29,14 +30,19 @@ fun PokemonListScreen(
     val state = viewModel.listState.collectAsStateWithLifecycle()
     val networkState = viewModel.networkState.collectAsStateWithLifecycle()
 
-    PokemonListContent(
-        state = state.value,
-        onCardClick = { id ->
-            navController.navigate(
-                NavDestinations.PokemonDetailsScreen(id)
-            )
-        }
-    )
+    ConnectionHandlingScreen(
+        response = networkState.value,
+        onRetry = viewModel::loadData
+    ) {
+        PokemonListContent(
+            state = state.value,
+            onCardClick = { id ->
+                navController.navigate(
+                    NavDestinations.PokemonDetailsScreen(id)
+                )
+            }
+        )
+    }
 }
 
 @Composable
