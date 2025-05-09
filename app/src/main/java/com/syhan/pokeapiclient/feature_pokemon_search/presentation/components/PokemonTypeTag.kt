@@ -1,33 +1,51 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.components
 
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
+import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonTypeColor
 
 @Composable
-fun PokemonTypeTag(type: String) {
-    TextButton(
-        onClick = {},
-        enabled = false
+fun PokemonTypeTag(
+    name: String,
+    color: Color
+) {
+    Box(
+        modifier = Modifier
+            .background(
+                color = color,
+                shape = RoundedCornerShape(8.dp)
+            )
     ) {
         Text(
-            text = type,
-            fontSize = 18.sp
+            text = name,
+            fontSize = 16.sp,
+            color = Color.White,
+            modifier = Modifier.padding(5.dp)
         )
     }
 }
 
 
-@PreviewLightDark
+@Preview
 @Composable
 private fun TagPreview() {
     PokeapiClientTheme {
-        Surface {
-            PokemonTypeTag("Poison")
+        Column {
+            val types = PokemonTypeColor.entries
+            types.forEach {
+                PokemonTypeTag(it.name, Color(it.color))
+            }
         }
     }
 }

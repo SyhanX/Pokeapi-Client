@@ -11,6 +11,7 @@ data class PokemonShortDetailsState(
         frontDefault = null,
         frontShiny = null
     ),
+    val types: List<Type> = emptyList()
 )
 
 data class PokemonFullDetailsState(

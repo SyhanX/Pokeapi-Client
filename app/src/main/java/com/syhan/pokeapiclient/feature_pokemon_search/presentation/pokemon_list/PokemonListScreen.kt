@@ -70,7 +70,8 @@ fun PokemonListContent(
                     onClick = {
                         Log.d(TAG, "PokemonListContent: clicked on ${it.id}")
                         onCardClick(it.id)
-                    }
+                    },
+                    types = it.types
                 )
             }
         }

@@ -82,7 +82,8 @@ class PokemonListViewModel(
                         PokemonShortDetailsState(
                             id = pokemon.id,
                             name = capitalizedName,
-                            sprites = pokemon.sprites
+                            sprites = pokemon.sprites,
+                            types = pokemon.types
                         )
                     )
                 }
