@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syhan.pokeapiclient.common.domain.NetworkErrorType
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
+import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstLetter
 import com.syhan.pokeapiclient.common.domain.util.doSimpleNetworkRequest
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.PokemonResultList
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
@@ -73,15 +74,10 @@ class PokemonListViewModel(
                 val body = response.body()
 
                 body?.let { pokemon ->
-                    val capitalizedName = pokemon.name.replaceFirstChar {
-                        if (it.isLowerCase()) it.uppercase()
-                        else it.toString()
-                    }
-
                     detailsList.add(
                         PokemonShortDetailsState(
                             id = pokemon.id,
-                            name = capitalizedName,
+                            name = pokemon.name.capitalizeFirstLetter(),
                             sprites = pokemon.sprites,
                             types = pokemon.types
                         )
