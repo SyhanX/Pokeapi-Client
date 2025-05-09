@@ -8,5 +8,6 @@ sealed interface NetworkResponse {
 
 enum class NetworkErrorType {
     NoInternetError,
-    UnexpectedError,
+    UnexpectedNetworkError,
+    UnknownError
 }
