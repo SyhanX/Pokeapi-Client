@@ -5,12 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Immutable
 @Serializable
-data class Types(
-    val types: List<Type>
-)
-
-@Immutable
-@Serializable
 data class Type(
     val slot: Int,
     val type: TypeInfo

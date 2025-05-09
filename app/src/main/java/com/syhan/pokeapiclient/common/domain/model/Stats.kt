@@ -6,12 +6,6 @@ import kotlinx.serialization.Serializable
 
 @Immutable
 @Serializable
-data class Stats(
-    val stats: List<Stat>
-)
-
-@Immutable
-@Serializable
 data class Stat(
     @SerialName("base_stat")
     val baseStat: Int,

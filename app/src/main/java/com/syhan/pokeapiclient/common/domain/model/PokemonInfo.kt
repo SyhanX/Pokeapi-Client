@@ -18,7 +18,7 @@ data class PokemonFullInfo(
     val name: String,
     val height: Int,
     val weight: Int,
-    val types: Types,
-    val stats: Stats,
-    val sprites: String,
+    val sprites: Sprites,
+    val stats: List<Stat>,
+    val types: List<Type>,
 )
