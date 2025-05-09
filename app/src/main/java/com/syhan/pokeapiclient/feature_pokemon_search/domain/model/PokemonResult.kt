@@ -1,4 +1,4 @@
-package com.syhan.pokeapiclient.common.domain.model
+package com.syhan.pokeapiclient.feature_pokemon_search.domain.model
 
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable

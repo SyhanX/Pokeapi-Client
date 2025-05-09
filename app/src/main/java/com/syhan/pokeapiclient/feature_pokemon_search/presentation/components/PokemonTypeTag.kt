@@ -1,4 +1,4 @@
-package com.syhan.pokeapiclient.common.presentation.components
+package com.syhan.pokeapiclient.feature_pokemon_search.presentation.components
 
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text

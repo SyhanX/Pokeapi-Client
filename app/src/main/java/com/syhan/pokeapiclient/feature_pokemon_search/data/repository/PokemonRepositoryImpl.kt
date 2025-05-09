@@ -1,7 +1,7 @@
-package com.syhan.pokeapiclient.common.data.repository
+package com.syhan.pokeapiclient.feature_pokemon_search.data.repository
 
 import com.syhan.pokeapiclient.common.data.remote.PokemonApi
-import com.syhan.pokeapiclient.common.domain.repository.PokemonRepository
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
 
 class PokemonRepositoryImpl(
     private val api: PokemonApi

@@ -1,4 +1,4 @@
-package com.syhan.pokeapiclient.common.presentation.pokemon_details
+package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

@@ -1,8 +1,8 @@
-package com.syhan.pokeapiclient.common.presentation.pokemon_details
+package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details
 
-import com.syhan.pokeapiclient.common.domain.model.Sprites
-import com.syhan.pokeapiclient.common.domain.model.Stat
-import com.syhan.pokeapiclient.common.domain.model.Type
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Sprites
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Stat
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
 
 data class PokemonShortDetailsState(
     val id: Int = -1,

@@ -1,7 +1,7 @@
 package com.syhan.pokeapiclient.common
 
 import android.app.Application
-import com.syhan.pokeapiclient.di.appModule
+import com.syhan.pokeapiclient.common.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 

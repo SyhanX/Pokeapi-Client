@@ -1,11 +1,11 @@
-package com.syhan.pokeapiclient.common.presentation.pokemon_details
+package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syhan.pokeapiclient.common.data.NetworkResponse
-import com.syhan.pokeapiclient.common.domain.repository.PokemonRepository
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
 import com.syhan.pokeapiclient.common.domain.util.doSimpleNetworkRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

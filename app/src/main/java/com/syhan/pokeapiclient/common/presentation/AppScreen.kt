@@ -7,8 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.syhan.pokeapiclient.common.data.NavDestinations
-import com.syhan.pokeapiclient.common.presentation.pokemon_details.PokemonDetailsScreen
-import com.syhan.pokeapiclient.common.presentation.pokemon_list.PokemonListScreen
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonDetailsScreen
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list.PokemonListScreen
 
 @Composable
 fun AppScreen(

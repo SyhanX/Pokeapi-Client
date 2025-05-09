@@ -1,4 +1,4 @@
-package com.syhan.pokeapiclient.common.presentation.pokemon_list
+package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -14,8 +14,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.syhan.pokeapiclient.common.data.NavDestinations
-import com.syhan.pokeapiclient.common.presentation.components.PokemonCard
-import com.syhan.pokeapiclient.common.presentation.pokemon_details.PokemonShortDetailsState
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonCard
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonShortDetailsState
 import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
 import org.koin.androidx.compose.koinViewModel
 

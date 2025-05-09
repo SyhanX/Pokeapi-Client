@@ -1,8 +1,8 @@
 package com.syhan.pokeapiclient.common.data.remote
 
-import com.syhan.pokeapiclient.common.domain.model.PokemonFullInfo
-import com.syhan.pokeapiclient.common.domain.model.PokemonResultList
-import com.syhan.pokeapiclient.common.domain.model.PokemonShortInfo
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.PokemonFullInfo
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.PokemonResultList
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.PokemonShortInfo
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
