@@ -1,8 +1,7 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.components
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -21,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -43,7 +43,12 @@ fun PokemonCard(
     types: List<Type>,
     onClick: () -> Unit,
 ) {
-    Log.d(TAG, "PokemonCard: $types")
+    val typeColors = mutableListOf<Color>()
+    types.forEach {
+        typeColors.add(
+            findTypeColor(it.type.name.capitalizeFirstLetter())
+        )
+    }
     Card(
         onClick = onClick,
     ) {
@@ -98,15 +103,25 @@ fun PokemonCard(
                 model = sprite,
                 contentDescription = null,
                 modifier = Modifier
-                    .background(
-                        color = if (isSystemInDarkTheme()) {
-                            Color.DarkGray
-                        } else {
-                            Color.White
-                        },
-                        shape = RoundedCornerShape(16.dp)
-                    )
                     .size(120.dp)
+                    .border(
+                        brush = Brush.linearGradient(
+                            colors = if (typeColors.size <= 1) {
+                                listOf(typeColors[0], typeColors[0])
+                            } else typeColors
+                        ),
+                        width = 2.dp,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = if (typeColors.size <= 1) {
+                                listOf(typeColors[0], typeColors[0])
+                            } else typeColors
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        alpha = 0.15f
+                    )
             )
 
         }
