@@ -47,7 +47,7 @@ class PokemonListViewModel(
         _networkState.value = NetworkResponse.Loading
 
         try {
-            val response = repository.getMultiplePokemon(5, 0)
+            val response = repository.getMultiplePokemon(30, 0)
             val body = response.body()
             _networkState.value = NetworkResponse.Success
             return@withContext body

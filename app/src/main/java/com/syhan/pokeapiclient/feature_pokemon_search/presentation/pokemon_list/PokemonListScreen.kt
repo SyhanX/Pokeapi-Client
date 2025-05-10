@@ -1,6 +1,7 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -69,6 +70,9 @@ fun PokemonListContent(
                 .padding(horizontal = 8.dp)
                 .fillMaxSize()
         ) {
+            item {
+                Spacer(Modifier)
+            }
             items(
                 items = state.list,
                 key = { pokemon: PokemonShortDetailsState ->
@@ -84,6 +88,9 @@ fun PokemonListContent(
                     },
                     types = it.types
                 )
+            }
+            item {
+                Spacer(Modifier)
             }
         }
     }
