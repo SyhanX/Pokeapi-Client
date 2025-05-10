@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
+import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstLetter
 import com.syhan.pokeapiclient.common.domain.util.doSimpleNetworkRequest
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,15 +36,22 @@ class PokemonDetailsViewModel(
             }
         }
     }
+
     private fun getFullPokemonInfo(id: Int) {
         doSimpleNetworkRequest(_networkState, viewModelScope) {
             val response = repository.getFullPokemonById(id)
             response.body()?.let {
                 _detailsState.value = detailsState.value.copy(
                     id = it.id,
-                    name = it.name,
+                    name = it.name.capitalizeFirstLetter(),
                     sprites = it.sprites,
-                    stats = it.stats,
+                    stats = it.stats.map { stat ->
+                        stat.copy(
+                            stat = stat.stat.copy(
+                                name = stat.stat.name.capitalizeFirstLetter()
+                            )
+                        )
+                    },
                     types = it.types,
                     height = it.height,
                     weight = it.weight

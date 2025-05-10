@@ -32,7 +32,7 @@ fun AppContent(navController: NavHostController) {
         composable<NavDestinations.PokemonDetailsScreen> {
             val args = it.toRoute<NavDestinations.PokemonDetailsScreen>()
             PokemonDetailsScreen(
-
+                navController = navController
             )
         }
     }

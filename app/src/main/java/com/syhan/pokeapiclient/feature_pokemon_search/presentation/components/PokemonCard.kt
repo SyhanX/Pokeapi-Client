@@ -24,9 +24,10 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstLetter
 import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
-import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonTypeColor
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.findTypeColor
 
 private const val TAG = "PokemonCard"
 
@@ -68,19 +69,11 @@ fun PokemonCard(
                         .wrapContentWidth()
                 ) {
                     types.forEach { type ->
-                        val typeName = type.type.name.replaceFirstChar {
-                            if (it.isLowerCase()) it.uppercase() else it.toString()
-                        }
-                        val typeColor = PokemonTypeColor.entries.find {
-                            it.name == typeName
-                        }?.color
-
+                        val typeProperName = type.type.name.capitalizeFirstLetter()
 
                         PokemonTypeTag(
-                            name = typeName,
-                            color = Color(
-                                color = typeColor ?: PokemonTypeColor.Unknown.color
-                            )
+                            name = typeProperName,
+                            color = findTypeColor(typeProperName)
                         )
                     }
                 }

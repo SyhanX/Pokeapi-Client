@@ -5,4 +5,14 @@
     <string name="unknown_error">An unknown error occurred</string>
     <string name="try_again">Try again</string>
     <string name="no_internet_description">I pay 1400 rubles monthly for a 500 mbit/sec internet and for some inexplicable reason it doesn\'t work properly</string>
+    <string name="navigate_back">Go back</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+    <string name="national_number">National №</string>
+    <string name="pokedex_data">Pokédex data</string>
+    <string name="type_singular">Type</string>
+    <string name="types_plural">Types</string>
+    <string name="stats">Stats</string>
+    <string name="special_attack">Sp. atk</string>
+    <string name="special_defense">Sp. def</string>
 </resources>
