@@ -36,6 +36,7 @@ import com.syhan.pokeapiclient.common.presentation.ConnectionHandlingScreen
 import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Stat
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.addLeadingZeros
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.findTypeColor
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonTypeTag
 import org.koin.androidx.compose.koinViewModel
@@ -76,7 +77,7 @@ fun PokemonDetailsContent(
         },
     ) { innerPadding ->
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(horizontal = 12.dp)
@@ -105,7 +106,7 @@ fun PokemonDetailsContent(
                                         listOf(typeColors[0], typeColors[0])
                                     } else typeColors
                                 ),
-                                width = 3.dp,
+                                width = 4.dp,
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .background(
@@ -115,7 +116,7 @@ fun PokemonDetailsContent(
                                     } else typeColors
                                 ),
                                 shape = RoundedCornerShape(8.dp),
-                                alpha = 0.3f
+                                alpha = 0.25f
                             )
                     )
                     Spacer(Modifier.height(12.dp))
@@ -141,7 +142,7 @@ fun PokemonDetailsContent(
                                 fontSize = 18.sp
                             )
                             Text(
-                                text = state.id.toString(),
+                                text = "#${addLeadingZeros(state.id)}",
                                 fontSize = 18.sp
                             )
                         }
@@ -171,10 +172,10 @@ fun PokemonDetailsContent(
                 }
             }
             item {
-                StatsCard(state.stats)
+                TypesCard(state.types)
             }
             item {
-                TypesCard(state.types)
+                StatsCard(state.stats)
             }
         }
     }
