@@ -115,7 +115,7 @@ fun PokemonDetailsContent(
                                     } else typeColors
                                 ),
                                 shape = RoundedCornerShape(8.dp),
-                                alpha = 0.4f
+                                alpha = 0.3f
                             )
                     )
                     Spacer(Modifier.height(12.dp))
