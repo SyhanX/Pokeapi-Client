@@ -15,4 +15,5 @@
     <string name="stats">Stats</string>
     <string name="special_attack">Sp. atk</string>
     <string name="special_defense">Sp. def</string>
+    <string name="pokemon_search">Pokémon search</string>
 </resources>
