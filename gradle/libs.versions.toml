@@ -19,6 +19,8 @@ retrofit2KotlinxSerializationConverter = "1.0.0"
 loggingInterceptor = "4.12.0"
 koinBom = "3.5.6"
 paging = "3.3.6"
+room = "2.7.1"
+ksp = "2.0.21-1.0.25"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,10 +52,14 @@ koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = 
 coil-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 androidx-paging = { module = "androidx.paging:paging-runtime", version.ref = "paging"}
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging"}
+androidx-room = { module = "androidx.room:room-ktx", version.ref = "room"}
+androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room"}
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serializationPlugin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
