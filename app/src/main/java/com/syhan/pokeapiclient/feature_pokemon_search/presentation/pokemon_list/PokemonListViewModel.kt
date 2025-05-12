@@ -83,7 +83,6 @@ class PokemonListViewModel(
                     * my mental anguish is immeasurable */
                     pokemonDetailsList = detailsList.toList(),
                 )
-                Log.d(TAG, "loadDetailedPokemonList: ${listState.value.pokemonDetailsList.size}")
                 _networkState.setSuccess()
             } catch (e: IOException) {
                 _networkState.setIoException(e)

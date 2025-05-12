@@ -1,6 +1,5 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,7 +49,6 @@ fun PokemonListScreen(
 ) {
     val networkState by viewModel.networkState.collectAsStateWithLifecycle()
     val listState by viewModel.listState.collectAsState()
-    Log.d(TAG, "PokemonListScreen recomposition")
     when (networkState) {
         NetworkResponse.Loading -> {
             LoadingScreen()
@@ -135,7 +133,6 @@ private fun PokemonList(
         if (reachedLoadingPoint) loadMoreItems()
     }
 
-    Log.d(TAG, "pokemon list recomposed")
     LazyColumn(
         state = lazyColumnState,
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -144,7 +141,6 @@ private fun PokemonList(
             .fillMaxSize()
             .animateContentSize()
     ) {
-        Log.d(TAG, "lazy column recomposed")
         item {
             Spacer(Modifier)
         }
@@ -152,7 +148,6 @@ private fun PokemonList(
             items = items,
             key = { pokemon: PokemonShortDetailsState -> pokemon.id }
         ) { state ->
-            Log.d(TAG, "lazy column items recomposed")
             PokemonCard(
                 id = state.id,
                 name = state.name,

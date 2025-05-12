@@ -1,6 +1,5 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -54,7 +53,6 @@ fun PokemonDetailsScreen(
     val state = viewModel.detailsState.collectAsStateWithLifecycle()
     val networkState = viewModel.networkState.collectAsStateWithLifecycle()
 
-    Log.d(TAG, "PokemonDetailsScreen: ${networkState.value}")
     when (networkState.value) {
         NetworkResponse.Loading -> {
             LoadingScreen()
