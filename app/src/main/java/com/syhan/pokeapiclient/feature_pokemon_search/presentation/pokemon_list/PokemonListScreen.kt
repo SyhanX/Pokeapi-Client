@@ -121,16 +121,18 @@ private fun PokemonList(
     loadMoreItems: () -> Unit,
 ) {
     val lazyColumnState = rememberLazyListState()
-    val buffer = 1
-    val reachedBottom: Boolean by remember {
+    val buffer = 10
+    /* the point in the LazyColumn at which the loadMoreItems() will be triggered*/
+    val reachedLoadingPoint: Boolean by remember {
         derivedStateOf {
             val lastVisibleItem = lazyColumnState.layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem?.index != 0 && lastVisibleItem?.index == lazyColumnState.layoutInfo.totalItemsCount - buffer
+            val totalItemsCount = lazyColumnState.layoutInfo.totalItemsCount
+            (lastVisibleItem?.index != 0) && (lastVisibleItem?.index == (totalItemsCount - buffer))
         }
     }
 
-    LaunchedEffect(reachedBottom) {
-        if (reachedBottom) loadMoreItems()
+    LaunchedEffect(reachedLoadingPoint) {
+        if (reachedLoadingPoint) loadMoreItems()
     }
 
     Log.d(TAG, "pokemon list recomposed")
