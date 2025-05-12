@@ -1,19 +1,20 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.syhan.pokeapiclient.common.domain.NetworkErrorType
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
-import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstLetter
-import com.syhan.pokeapiclient.common.domain.util.doSimpleNetworkRequest
-import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.PokemonResultList
+import com.syhan.pokeapiclient.common.domain.setHttpException
+import com.syhan.pokeapiclient.common.domain.setIoException
+import com.syhan.pokeapiclient.common.domain.setLoading
+import com.syhan.pokeapiclient.common.domain.setSuccess
+import com.syhan.pokeapiclient.common.domain.setUnknownException
+import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonShortDetailsState
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okio.IOException
 import retrofit2.HttpException
 
@@ -32,61 +33,65 @@ class PokemonListViewModel(
     private val detailsList = mutableListOf<PokemonShortDetailsState>()
 
     init {
-        loadData()
+        tryLoadingPokemonList()
     }
 
-    fun loadData() {
+    fun tryLoadingPokemonList() {
+        _networkState.setLoading()
+        loadDetailedPokemonList()
+    }
+
+    fun loadMoreItems() {
+        loadDetailedPokemonList()
+    }
+
+    private fun loadDetailedPokemonList() {
         viewModelScope.launch {
-            getPokemonList()?.let { result ->
-                getShortPokemonInfo(result)
-            }
-        }
-    }
+            try {
+                val resultList = repository.getMultiplePokemon(
+                    limit = listState.value.itemsPerPage,
+                    offset = listState.value.pokemonDetailsList.size
+                ).body() ?: throw IOException()
 
-    private suspend fun getPokemonList(): PokemonResultList? = withContext(Dispatchers.IO) {
-        _networkState.value = NetworkResponse.Loading
-
-        try {
-            val response = repository.getMultiplePokemon(30, 0)
-            val body = response.body()
-            _networkState.value = NetworkResponse.Success
-            return@withContext body
-        } catch (e: IOException) {
-            _networkState.value = NetworkResponse.Error(NetworkErrorType.NoInternetError)
-            return@withContext null
-        } catch (e: HttpException) {
-            _networkState.value = NetworkResponse.Error(NetworkErrorType.UnexpectedNetworkError)
-            return@withContext null
-        }
-    }
-
-    private fun getShortPokemonInfo(list: PokemonResultList) {
-        doSimpleNetworkRequest(_networkState, viewModelScope) {
-            val pokemonIdList = list.results.map { result ->
-                /*trimming the url so that it only returns the id of a pokemon*/
-                result.url
-                    .removePrefix("https://pokeapi.co/api/v2/pokemon/")
-                    .removeSuffix("/")
-                    .toInt()
-            }
-            pokemonIdList.forEach { id ->
-                val response = repository.getShortPokemonById(id)
-                val body = response.body()
-
-                body?.let { pokemon ->
-                    detailsList.add(
-                        PokemonShortDetailsState(
-                            id = pokemon.id,
-                            name = pokemon.name.capitalizeFirstLetter(),
-                            sprites = pokemon.sprites,
-                            types = pokemon.types
-                        )
-                    )
+                /* transforming url list into id list */
+                val pokemonIdList: List<Int> = resultList.results.map {
+                    it.url
+                        .removePrefix("https://pokeapi.co/api/v2/pokemon/")
+                        .removeSuffix("/")
+                        .toInt()
                 }
+
+                pokemonIdList.forEach { id ->
+                    repository
+                        .getShortPokemonById(id)
+                        .body()
+                        ?.let { details ->
+                            detailsList.add(
+                                PokemonShortDetailsState(
+                                    id = details.id,
+                                    name = details.name.capitalizeFirstChar(),
+                                    sprites = details.sprites,
+                                    types = details.types
+                                )
+                            )
+                        }
+                }
+
+                _listState.value = listState.value.copy(
+                    /* converting this list to a new list triggers a recomposition in PokemonListScreen
+                    * it took me several hours to figure this out and it's 2 hours past midnight now
+                    * my mental anguish is immeasurable */
+                    pokemonDetailsList = detailsList.toList(),
+                )
+                Log.d(TAG, "loadDetailedPokemonList: ${listState.value.pokemonDetailsList.size}")
+                _networkState.setSuccess()
+            } catch (e: IOException) {
+                _networkState.setIoException(e)
+            } catch (e: HttpException) {
+                _networkState.setHttpException(e)
+            } catch (e: Exception) {
+                _networkState.setUnknownException(e)
             }
-            _listState.value = listState.value.copy(
-                list = detailsList
-            )
         }
     }
 }

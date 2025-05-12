@@ -1,25 +1,42 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
+import android.util.Log
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.syhan.pokeapiclient.R
 import com.syhan.pokeapiclient.common.data.NavDestinations
-import com.syhan.pokeapiclient.common.presentation.ConnectionHandlingScreen
-import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
+import com.syhan.pokeapiclient.common.domain.NetworkResponse
+import com.syhan.pokeapiclient.common.presentation.LoadingScreen
+import com.syhan.pokeapiclient.common.presentation.NetworkErrorScreen
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonCard
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonShortDetailsState
 import org.koin.androidx.compose.koinViewModel
@@ -31,75 +48,130 @@ fun PokemonListScreen(
     viewModel: PokemonListViewModel = koinViewModel(),
     navController: NavController,
 ) {
-    val state = viewModel.listState.collectAsStateWithLifecycle()
-    val networkState = viewModel.networkState.collectAsStateWithLifecycle()
+    val networkState by viewModel.networkState.collectAsStateWithLifecycle()
+    val listState by viewModel.listState.collectAsState()
+    Log.d(TAG, "PokemonListScreen recomposition")
+    when (networkState) {
+        NetworkResponse.Loading -> {
+            LoadingScreen()
+        }
 
-    ConnectionHandlingScreen(
-        response = networkState.value,
-        onRetry = viewModel::loadData
-    ) {
-        PokemonListContent(
-            state = state.value,
-            onCardClick = { id ->
-                navController.navigate(
-                    NavDestinations.PokemonDetailsScreen(id)
-                )
-            }
-        )
+        is NetworkResponse.Error -> {
+            NetworkErrorScreen(
+                errorType = (networkState as NetworkResponse.Error).type,
+                onRetry = viewModel::tryLoadingPokemonList
+            )
+        }
+
+        NetworkResponse.Success -> {
+            PokemonListContent(
+                items = listState.pokemonDetailsList,
+                onCardClick = { id ->
+                    navController.navigate(
+                        NavDestinations.PokemonDetailsScreen(id)
+                    )
+                },
+                onFabClick = {
+                    /*TODO*/
+                },
+                loadMoreItems = {
+                    viewModel.loadMoreItems()
+                },
+            )
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokemonListContent(
-    state: PokemonListState,
+    items: List<PokemonShortDetailsState>,
     onCardClick: (id: Int) -> Unit,
+    onFabClick: () -> Unit,
+    loadMoreItems: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
     Scaffold(
-        topBar = {
-            PokemonListAppBar(scrollBehavior)
-        },
-        modifier = Modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) { innerPadding ->
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(horizontal = 8.dp)
-                .fillMaxSize()
-        ) {
-            item {
-                Spacer(Modifier)
-            }
-            items(
-                items = state.list,
-                key = { pokemon: PokemonShortDetailsState ->
-                    pokemon.name
-                }
-            ) {
-                PokemonCard(
-                    id = it.id,
-                    name = it.name,
-                    sprite = it.sprites.frontDefault ?: "",
-                    onClick = {
-                        onCardClick(it.id)
-                    },
-                    types = it.types
+        topBar = { PokemonListAppBar(scrollBehavior) },
+        floatingActionButton = {
+            FloatingActionButton(onClick = loadMoreItems) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_dice),
+                    contentDescription = null
                 )
             }
-            item {
-                Spacer(Modifier)
-            }
-        }
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
+        PokemonList(
+            modifier = Modifier.padding(innerPadding),
+            items = items,
+            onCardClick = { onCardClick(it) },
+            loadMoreItems = loadMoreItems,
+        )
     }
 }
 
-@Preview
 @Composable
-private fun PokemonListPreview() {
-    PokeapiClientTheme {
+private fun PokemonList(
+    modifier: Modifier = Modifier,
+    items: List<PokemonShortDetailsState>,
+    onCardClick: (id: Int) -> Unit,
+    loadMoreItems: () -> Unit,
+) {
+    val lazyColumnState = rememberLazyListState()
+    val buffer = 1
+    val reachedBottom: Boolean by remember {
+        derivedStateOf {
+            val lastVisibleItem = lazyColumnState.layoutInfo.visibleItemsInfo.lastOrNull()
+            lastVisibleItem?.index != 0 && lastVisibleItem?.index == lazyColumnState.layoutInfo.totalItemsCount - buffer
+        }
+    }
 
+    LaunchedEffect(reachedBottom) {
+        if (reachedBottom) loadMoreItems()
+    }
+
+    Log.d(TAG, "pokemon list recomposed")
+    LazyColumn(
+        state = lazyColumnState,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = modifier
+            .padding(horizontal = 8.dp)
+            .fillMaxSize()
+            .animateContentSize()
+    ) {
+        Log.d(TAG, "lazy column recomposed")
+        item {
+            Spacer(Modifier)
+        }
+        items(
+            items = items,
+            key = { pokemon: PokemonShortDetailsState -> pokemon.id }
+        ) { state ->
+            Log.d(TAG, "lazy column items recomposed")
+            PokemonCard(
+                id = state.id,
+                name = state.name,
+                sprite = state.sprites.frontDefault.toString(),
+                types = state.types,
+                onClick = { onCardClick(state.id) },
+                modifier = Modifier.animateItem()
+            )
+        }
+        item {
+            if (items.isNotEmpty()) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .height(60.dp)
+                        .fillMaxWidth()
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
     }
 }

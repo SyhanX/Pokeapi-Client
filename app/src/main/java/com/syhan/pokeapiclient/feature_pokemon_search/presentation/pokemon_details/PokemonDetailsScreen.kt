@@ -1,5 +1,6 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -31,8 +32,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.syhan.pokeapiclient.R
-import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstLetter
-import com.syhan.pokeapiclient.common.presentation.ConnectionHandlingScreen
+import com.syhan.pokeapiclient.common.domain.NetworkResponse
+import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
+import com.syhan.pokeapiclient.common.presentation.LoadingScreen
+import com.syhan.pokeapiclient.common.presentation.NetworkErrorScreen
 import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Stat
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
@@ -51,16 +54,29 @@ fun PokemonDetailsScreen(
     val state = viewModel.detailsState.collectAsStateWithLifecycle()
     val networkState = viewModel.networkState.collectAsStateWithLifecycle()
 
-    ConnectionHandlingScreen(
-        response = networkState.value,
-        onRetry = viewModel::loadData
-    ) {
-        PokemonDetailsContent(
-            state = state.value,
-            navigateUp = {
-                navController.navigateUp()
-            }
-        )
+    Log.d(TAG, "PokemonDetailsScreen: ${networkState.value}")
+    when (networkState.value) {
+        NetworkResponse.Loading -> {
+            LoadingScreen()
+        }
+
+        is NetworkResponse.Error -> {
+            NetworkErrorScreen(
+                errorType = (networkState.value as NetworkResponse.Error).type,
+                onRetry = {
+                    /*TODO*/
+                }
+            )
+        }
+
+        NetworkResponse.Success -> {
+            PokemonDetailsContent(
+                state = state.value,
+                navigateUp = {
+                    navController.navigateUp()
+                }
+            )
+        }
     }
 }
 
@@ -87,7 +103,7 @@ fun PokemonDetailsContent(
                 val typeColors = mutableListOf<Color>()
                 state.types.forEach {
                     typeColors.add(
-                        findTypeColor(it.type.name.capitalizeFirstLetter())
+                        findTypeColor(it.type.name.capitalizeFirstChar())
                     )
                 }
                 Column(
@@ -121,7 +137,7 @@ fun PokemonDetailsContent(
                     )
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        text = state.name.capitalizeFirstLetter(),
+                        text = state.name.capitalizeFirstChar(),
                         fontSize = 22.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -206,7 +222,7 @@ private fun TypesCard(
                     .fillMaxWidth()
             ) {
                 types.forEach { type ->
-                    val capitalizedName = type.type.name.capitalizeFirstLetter()
+                    val capitalizedName = type.type.name.capitalizeFirstChar()
                     PokemonTypeTag(
                         name = capitalizedName,
                         color = findTypeColor(capitalizedName),
@@ -243,7 +259,7 @@ private fun StatsCard(
                 /* 0: hp, 1: Attack, 2: Defense, 3: Sp. at, 4: Sp. def, 5: Speed */
                 Column(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
-                ){
+                ) {
                     Text(
                         text = stats[0].stat.name,
                         fontSize = 18.sp,

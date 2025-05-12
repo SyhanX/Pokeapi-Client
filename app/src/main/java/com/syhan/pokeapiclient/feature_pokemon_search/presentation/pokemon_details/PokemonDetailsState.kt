@@ -1,9 +1,11 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details
 
+import androidx.compose.runtime.Immutable
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Sprites
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Stat
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
 
+@Immutable
 data class PokemonShortDetailsState(
     val id: Int = -1,
     val name: String = "",
@@ -14,6 +16,7 @@ data class PokemonShortDetailsState(
     val types: List<Type> = emptyList()
 )
 
+@Immutable
 data class PokemonFullDetailsState(
     val id: Int = -1,
     val name: String = "",

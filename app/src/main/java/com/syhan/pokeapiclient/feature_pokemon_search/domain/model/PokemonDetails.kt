@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Immutable
 @Serializable
-data class PokemonShortInfo(
+data class PokemonDetailsShort(
     val id: Int,
     val name: String,
     val sprites: Sprites,
@@ -14,7 +14,7 @@ data class PokemonShortInfo(
 
 @Immutable
 @Serializable
-data class PokemonFullInfo(
+data class PokemonDetailsFull(
     val id: Int,
     val name: String,
     val height: Int,
