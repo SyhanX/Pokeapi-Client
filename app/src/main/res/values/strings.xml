@@ -16,4 +16,5 @@
     <string name="special_attack">Sp. atk</string>
     <string name="special_defense">Sp. def</string>
     <string name="pokemon_search">Pokémon search</string>
+    <string name="randomize_list">Randomize</string>
 </resources>

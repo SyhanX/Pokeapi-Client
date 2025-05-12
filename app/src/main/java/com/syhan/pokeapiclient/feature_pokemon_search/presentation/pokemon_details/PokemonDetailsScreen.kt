@@ -54,7 +54,7 @@ fun PokemonDetailsScreen(
     val networkState = viewModel.networkState.collectAsStateWithLifecycle()
 
     when (networkState.value) {
-        NetworkResponse.Loading -> {
+        NetworkResponse.InitialLoading -> {
             LoadingScreen()
         }
 

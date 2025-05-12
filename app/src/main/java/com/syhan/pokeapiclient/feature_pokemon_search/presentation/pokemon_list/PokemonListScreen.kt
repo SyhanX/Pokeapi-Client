@@ -1,5 +1,6 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,9 +14,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -28,7 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.syhan.pokeapiclient.R
@@ -50,7 +54,7 @@ fun PokemonListScreen(
     val networkState by viewModel.networkState.collectAsStateWithLifecycle()
     val listState by viewModel.listState.collectAsState()
     when (networkState) {
-        NetworkResponse.Loading -> {
+        NetworkResponse.InitialLoading -> {
             LoadingScreen()
         }
 
@@ -69,12 +73,8 @@ fun PokemonListScreen(
                         NavDestinations.PokemonDetailsScreen(id)
                     )
                 },
-                onFabClick = {
-                    /*TODO*/
-                },
-                loadMoreItems = {
-                    viewModel.loadMoreItems()
-                },
+                loadRandomizedList = viewModel::loadRandomizedList,
+                loadMoreItems = viewModel::loadMoreItems,
             )
         }
     }
@@ -85,7 +85,7 @@ fun PokemonListScreen(
 fun PokemonListContent(
     items: List<PokemonShortDetailsState>,
     onCardClick: (id: Int) -> Unit,
-    onFabClick: () -> Unit,
+    loadRandomizedList: () -> Unit,
     loadMoreItems: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -93,12 +93,21 @@ fun PokemonListContent(
     Scaffold(
         topBar = { PokemonListAppBar(scrollBehavior) },
         floatingActionButton = {
-            FloatingActionButton(onClick = loadMoreItems) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_dice),
-                    contentDescription = null
-                )
-            }
+            ExtendedFloatingActionButton(
+                text = {
+                    Text(
+                        text = stringResource(R.string.randomize_list),
+                        fontSize = 18.sp
+                    )
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_dice),
+                        contentDescription = null
+                    )
+                },
+                onClick = loadRandomizedList
+            )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
@@ -119,7 +128,7 @@ private fun PokemonList(
     loadMoreItems: () -> Unit,
 ) {
     val lazyColumnState = rememberLazyListState()
-    val buffer = 10
+    val buffer = 1
     /* the point in the LazyColumn at which the loadMoreItems() will be triggered*/
     val reachedLoadingPoint: Boolean by remember {
         derivedStateOf {
@@ -130,7 +139,10 @@ private fun PokemonList(
     }
 
     LaunchedEffect(reachedLoadingPoint) {
-        if (reachedLoadingPoint) loadMoreItems()
+        if (reachedLoadingPoint) {
+            loadMoreItems()
+            Log.d(TAG, "PokemonList: reached loading point")
+        }
     }
 
     LazyColumn(

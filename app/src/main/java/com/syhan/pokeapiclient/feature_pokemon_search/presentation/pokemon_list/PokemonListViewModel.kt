@@ -1,12 +1,11 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import com.syhan.pokeapiclient.common.domain.setHttpException
+import com.syhan.pokeapiclient.common.domain.setInitialLoading
 import com.syhan.pokeapiclient.common.domain.setIoException
-import com.syhan.pokeapiclient.common.domain.setLoading
 import com.syhan.pokeapiclient.common.domain.setSuccess
 import com.syhan.pokeapiclient.common.domain.setUnknownException
 import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
@@ -17,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.HttpException
+import kotlin.random.Random
 
 private const val TAG = "PokemonListViewModel"
 
@@ -27,30 +27,42 @@ class PokemonListViewModel(
     private val _listState = MutableStateFlow(PokemonListState())
     val listState = _listState.asStateFlow()
 
-    private val _networkState = MutableStateFlow<NetworkResponse>(NetworkResponse.Loading)
+    private val _networkState = MutableStateFlow<NetworkResponse>(NetworkResponse.InitialLoading)
     val networkState = _networkState.asStateFlow()
 
-    private val detailsList = mutableListOf<PokemonShortDetailsState>()
+    private val detailsList = mutableSetOf<PokemonShortDetailsState>()
 
     init {
         tryLoadingPokemonList()
     }
 
     fun tryLoadingPokemonList() {
-        _networkState.setLoading()
-        loadDetailedPokemonList()
+        _networkState.setInitialLoading()
+        loadDetailedPokemonList(listState.value.pokemonDetailsList.size)
     }
 
     fun loadMoreItems() {
-        loadDetailedPokemonList()
+        loadDetailedPokemonList(listState.value.pokemonDetailsList.size)
     }
 
-    private fun loadDetailedPokemonList() {
+    fun loadRandomizedList() {
+        val minPokemonId = 0
+        val maxPokemonId = 1302
+        /* subtract the max range so that there will always be enough items to load */
+        val randomEntryNumber = Random
+            .nextInt(minPokemonId, maxPokemonId - listState.value.itemsPerPage)
+
+        _networkState.setInitialLoading()
+        detailsList.clear()
+        loadDetailedPokemonList(randomEntryNumber)
+    }
+
+    private fun loadDetailedPokemonList(offset: Int) {
         viewModelScope.launch {
             try {
                 val resultList = repository.getMultiplePokemon(
                     limit = listState.value.itemsPerPage,
-                    offset = listState.value.pokemonDetailsList.size
+                    offset = offset
                 ).body() ?: throw IOException()
 
                 /* transforming url list into id list */
