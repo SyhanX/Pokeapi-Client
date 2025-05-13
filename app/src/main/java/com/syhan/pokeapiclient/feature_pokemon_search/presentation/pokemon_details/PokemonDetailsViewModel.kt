@@ -34,10 +34,10 @@ class PokemonDetailsViewModel(
     private val currentPokemonId = savedStateHandle.get<Int>("currentPokemonId")
 
     init {
-        loadData()
+        tryLoadingData()
     }
 
-    fun loadData() {
+    fun tryLoadingData() {
         currentPokemonId?.let { id ->
             if (id != -1) {
                 getFullPokemonInfo(id)

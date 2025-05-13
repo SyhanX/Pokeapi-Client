@@ -59,9 +59,7 @@ fun PokemonDetailsScreen(
         is NetworkResponse.Error -> {
             NetworkErrorScreen(
                 errorType = (networkState as NetworkResponse.Error).type,
-                onRetry = {
-                    /*TODO*/
-                }
+                onRetry = viewModel::tryLoadingData
             )
         }
 
