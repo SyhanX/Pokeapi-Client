@@ -39,6 +39,12 @@ import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.addLeadingZeros
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.findTypeColor
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonTypeTag
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.ATTACK
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.DEFENSE
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.HP
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.SPECIAL_ATTACK
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.SPECIAL_DEFENSE
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.SPEED
 import org.koin.androidx.compose.koinViewModel
 
 private const val TAG = "PokemonDetailsScreen"
@@ -52,7 +58,7 @@ fun PokemonDetailsScreen(
     val detailsState by viewModel.detailsState.collectAsStateWithLifecycle()
 
     when (networkState) {
-        NetworkResponse.InitialLoading -> {
+        NetworkResponse.Loading -> {
             LoadingScreen()
         }
 
@@ -257,17 +263,16 @@ private fun StatsCard(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                /* 0: hp, 1: Attack, 2: Defense, 3: Sp. at, 4: Sp. def, 5: Speed */
                 Column(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
-                        text = stats[0].stat.name,
+                        text = stats[HP].stat.name,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = stats[0].baseStat.toString(),
+                        text = stats[HP].baseStat.toString(),
                         fontSize = 18.sp,
                     )
                     Text(
@@ -276,7 +281,7 @@ private fun StatsCard(
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = stats[3].baseStat.toString(),
+                        text = stats[SPECIAL_ATTACK].baseStat.toString(),
                         fontSize = 18.sp,
                     )
                 }
@@ -284,12 +289,12 @@ private fun StatsCard(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
-                        text = stats[1].stat.name,
+                        text = stats[ATTACK].stat.name,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = stats[1].baseStat.toString(),
+                        text = stats[ATTACK].baseStat.toString(),
                         fontSize = 18.sp,
                     )
                     Text(
@@ -298,7 +303,7 @@ private fun StatsCard(
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = stats[4].baseStat.toString(),
+                        text = stats[SPECIAL_DEFENSE].baseStat.toString(),
                         fontSize = 18.sp,
                     )
                 }
@@ -306,21 +311,21 @@ private fun StatsCard(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
-                        text = stats[2].stat.name,
+                        text = stats[DEFENSE].stat.name,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = stats[2].baseStat.toString(),
+                        text = stats[DEFENSE].baseStat.toString(),
                         fontSize = 18.sp,
                     )
                     Text(
-                        text = stats[5].stat.name,
+                        text = stats[SPEED].stat.name,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = stats[5].baseStat.toString(),
+                        text = stats[SPEED].baseStat.toString(),
                         fontSize = 18.sp,
                     )
                 }

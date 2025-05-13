@@ -8,7 +8,7 @@ import retrofit2.HttpException
 private const val TAG = "NetworkResponse"
 
 sealed interface NetworkResponse {
-    data object InitialLoading : NetworkResponse
+    data object Loading : NetworkResponse
     data class Error(val type: NetworkErrorType) : NetworkResponse
     data object Success : NetworkResponse
 }
@@ -19,9 +19,9 @@ enum class NetworkErrorType {
     UnknownError
 }
 
-fun MutableStateFlow<NetworkResponse>.setInitialLoading() {
+fun MutableStateFlow<NetworkResponse>.setLoading() {
     Log.i(TAG, "Loading for the first time")
-    this.value = NetworkResponse.InitialLoading
+    this.value = NetworkResponse.Loading
 }
 
 fun MutableStateFlow<NetworkResponse>.setSuccess() {

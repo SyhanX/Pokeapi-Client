@@ -2,6 +2,7 @@ package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -24,11 +25,13 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -38,7 +41,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +59,7 @@ import com.syhan.pokeapiclient.common.data.NavDestinations
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import com.syhan.pokeapiclient.common.presentation.LoadingScreen
 import com.syhan.pokeapiclient.common.presentation.NetworkErrorScreen
-import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSorting
+import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingAlgorithm
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonCard
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonShortDetailsState
 import org.koin.androidx.compose.koinViewModel
@@ -72,7 +74,7 @@ fun PokemonListScreen(
     val networkState by viewModel.networkState.collectAsStateWithLifecycle()
     val listState by viewModel.listState.collectAsStateWithLifecycle()
     when (networkState) {
-        NetworkResponse.InitialLoading -> {
+        NetworkResponse.Loading -> {
             LoadingScreen()
         }
 
@@ -86,13 +88,19 @@ fun PokemonListScreen(
         NetworkResponse.Success -> {
             PokemonListContent(
                 items = listState.pokemonDetailsList,
+                sortingAlg = listState.sorting,
+                isSortingEnabled = listState.isSortingEnabled,
+                loadMoreItems = viewModel::loadMoreItems,
+                loadRandomizedList = viewModel::loadRandomizedList,
+                onCheckedChange = viewModel::switchSortingState,
                 onCardClick = { id ->
                     navController.navigate(
                         NavDestinations.PokemonDetailsScreen(id)
                     )
                 },
-                loadRandomizedList = viewModel::loadRandomizedList,
-                loadMoreItems = viewModel::loadMoreItems,
+                onStatSelect = {
+
+                }
             )
         }
     }
@@ -102,48 +110,71 @@ fun PokemonListScreen(
 @Composable
 fun PokemonListContent(
     items: List<PokemonShortDetailsState>,
+    isSortingEnabled: Boolean,
+    sortingAlg: PokemonSortingAlgorithm,
     onCardClick: (id: Int) -> Unit,
     loadRandomizedList: () -> Unit,
     loadMoreItems: () -> Unit,
+    onStatSelect: (PokemonSortingAlgorithm) -> Unit,
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
         topBar = { PokemonListAppBar(scrollBehavior) },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = {
-                    Text(
-                        text = stringResource(R.string.randomize_list),
-                        fontSize = 18.sp
-                    )
-                },
-                icon = {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_dice),
-                        contentDescription = null
-                    )
-                },
-                onClick = loadRandomizedList
-            )
+            AnimatedVisibility(
+                visible = (!isSortingEnabled)
+            ) {
+                RandomizeListFAB(loadRandomizedList)
+            }
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
         PokemonList(
             modifier = Modifier.padding(innerPadding),
             items = items,
+            sortingAlg = sortingAlg,
+            isSortingEnabled = isSortingEnabled,
             onCardClick = { onCardClick(it) },
             loadMoreItems = loadMoreItems,
+            onSelectStat = { onStatSelect(it) },
+            onCheckedChange = {
+                onCheckedChange(!it)
+            }
         )
     }
+}
+
+@Composable
+fun RandomizeListFAB(onClick: () -> Unit) {
+    ExtendedFloatingActionButton(
+        text = {
+            Text(
+                text = stringResource(R.string.randomize_list),
+                fontSize = 18.sp
+            )
+        },
+        icon = {
+            Icon(
+                painter = painterResource(R.drawable.ic_dice),
+                contentDescription = null
+            )
+        },
+        onClick = onClick
+    )
 }
 
 @Composable
 private fun PokemonList(
     modifier: Modifier = Modifier,
     items: List<PokemonShortDetailsState>,
-    onCardClick: (id: Int) -> Unit,
+    isSortingEnabled: Boolean,
+    sortingAlg: PokemonSortingAlgorithm,
     loadMoreItems: () -> Unit,
+    onCardClick: (id: Int) -> Unit,
+    onSelectStat: (PokemonSortingAlgorithm) -> Unit,
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     val lazyColumnState = rememberLazyListState()
     val buffer = 1
@@ -156,11 +187,12 @@ private fun PokemonList(
         }
     }
     var isMenuExpanded by remember { mutableStateOf(false) }
-    var selectedStat by rememberSaveable { mutableStateOf<PokemonSorting>(PokemonSorting.SortByNumber) }
 
-    LaunchedEffect(reachedLoadingPoint) {
-        if (reachedLoadingPoint) {
-            loadMoreItems()
+    if (!isSortingEnabled) {
+        LaunchedEffect(reachedLoadingPoint) {
+            if (reachedLoadingPoint) {
+                loadMoreItems()
+            }
         }
     }
 
@@ -173,28 +205,49 @@ private fun PokemonList(
             .animateContentSize()
     ) {
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                SortingMenuBox(
-                    isMenuExpanded = isMenuExpanded,
-                    statName = selectedStat.statName,
-                    statImage = selectedStat.statImage,
-                    onClick = {
-                        isMenuExpanded = !isMenuExpanded
-                    },
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
                 ) {
-                    SortingMenu(
-                        isExpanded = isMenuExpanded,
-                        onDismiss = { isMenuExpanded = false },
-                        onStatClick = {
-                            isMenuExpanded = false
-                            selectedStat = it
-                        }
+                    Text(
+                        text = "Enable sorting",
+                        fontSize = 18.sp
+                    )
+                    Switch(
+                        checked = isSortingEnabled,
+                        onCheckedChange = { onCheckedChange(it) }
                     )
                 }
+                AnimatedVisibility(
+                    visible = isSortingEnabled
+                ) {
+                    SortingMenuBox(
+                        isMenuExpanded = isMenuExpanded,
+                        statName = sortingAlg.selectedStatName,
+                        statIcon = sortingAlg.selectedStatIcon,
+                        onClick = {
+                            isMenuExpanded = !isMenuExpanded
+                        },
+                        isSortingEnabled = isSortingEnabled
+                    ) {
+                        SortingMenu(
+                            isExpanded = isMenuExpanded,
+                            onDismiss = { isMenuExpanded = false },
+                            onSortingAlgSelect = {
+                                isMenuExpanded = false
+                                onSelectStat(it)
+                            }
+                        )
+                    }
+                }
             }
+        }
+        item {
+            HorizontalDivider()
         }
         items(
             items = items,
@@ -210,7 +263,7 @@ private fun PokemonList(
             )
         }
         item {
-            if (items.isNotEmpty()) {
+            if (items.isNotEmpty() && !isSortingEnabled) {
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -229,7 +282,7 @@ private fun PokemonList(
 private fun SortingMenu(
     isExpanded: Boolean,
     onDismiss: () -> Unit,
-    onStatClick: (PokemonSorting) -> Unit
+    onSortingAlgSelect: (PokemonSortingAlgorithm) -> Unit
 ) {
     DropdownMenu(
         expanded = isExpanded,
@@ -241,23 +294,22 @@ private fun SortingMenu(
         ),
         offset = DpOffset(x = 0.dp, y = 14.dp)
     ) {
-        val sortingList = PokemonSorting.entries
-        sortingList.forEach { stat ->
+        PokemonSortingAlgorithm.entries.forEach { algorithm ->
             DropdownMenuItem(
                 leadingIcon = {
                     Icon(
-                        painter = painterResource(stat.statImage),
+                        painter = painterResource(algorithm.selectedStatIcon),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 },
                 text = {
                     Text(
-                        text = stringResource(stat.statName),
+                        text = stringResource(algorithm.selectedStatName),
                         fontSize = 18.sp
                     )
                 },
-                onClick = { onStatClick(stat) }
+                onClick = { onSortingAlgSelect(algorithm) }
             )
         }
     }
@@ -265,14 +317,14 @@ private fun SortingMenu(
 
 @Composable
 private fun SortingMenuBox(
-    isMenuExpanded: Boolean,
     @StringRes statName: Int,
-    @DrawableRes statImage: Int,
+    @DrawableRes statIcon: Int,
+    isMenuExpanded: Boolean,
+    isSortingEnabled: Boolean,
     onClick: () -> Unit,
     menu: @Composable (() -> Unit)
 ) {
     val colors = MaterialTheme.colorScheme
-    /* this isn't confusing at all */
     OutlinedTextField(
         colors = if (isMenuExpanded) {
             OutlinedTextFieldDefaults.colors(
@@ -313,7 +365,7 @@ private fun SortingMenuBox(
         enabled = false,
         leadingIcon = {
             Icon(
-                painter = painterResource(statImage),
+                painter = painterResource(statIcon),
                 contentDescription = null,
             )
         },
@@ -333,10 +385,15 @@ private fun SortingMenuBox(
             menu()
         },
         modifier = Modifier
-            .clickable(
-                interactionSource = null,
-                indication = null
-            ) { onClick() }
             .fillMaxWidth()
+            .then(
+                if (isSortingEnabled) {
+                    Modifier.clickable(
+                        interactionSource = null,
+                        indication = null,
+                        onClick = onClick
+                    )
+                } else Modifier
+            )
     )
 }

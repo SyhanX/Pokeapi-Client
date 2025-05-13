@@ -1,16 +1,20 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import com.syhan.pokeapiclient.common.domain.setHttpException
-import com.syhan.pokeapiclient.common.domain.setInitialLoading
 import com.syhan.pokeapiclient.common.domain.setIoException
+import com.syhan.pokeapiclient.common.domain.setLoading
 import com.syhan.pokeapiclient.common.domain.setSuccess
 import com.syhan.pokeapiclient.common.domain.setUnknownException
 import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonShortDetailsState
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.ATTACK
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.DEFENSE
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.HP
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -27,7 +31,7 @@ class PokemonListViewModel(
     private val _listState = MutableStateFlow(PokemonListState())
     val listState = _listState.asStateFlow()
 
-    private val _networkState = MutableStateFlow<NetworkResponse>(NetworkResponse.InitialLoading)
+    private val _networkState = MutableStateFlow<NetworkResponse>(NetworkResponse.Loading)
     val networkState = _networkState.asStateFlow()
 
     private val detailsList = mutableSetOf<PokemonShortDetailsState>()
@@ -43,7 +47,7 @@ class PokemonListViewModel(
     }
 
     fun tryLoadingPokemonList() {
-        _networkState.setInitialLoading()
+        _networkState.setLoading()
         loadDetailedPokemonList()
         addOffsetToList()
     }
@@ -63,7 +67,7 @@ class PokemonListViewModel(
         _listState.value = listState.value.copy(
             offset = randomizedOffset
         )
-        _networkState.setInitialLoading()
+        _networkState.setLoading()
 
         detailsList.clear()
 
@@ -118,5 +122,56 @@ class PokemonListViewModel(
                 _networkState.setUnknownException(e)
             }
         }
+    }
+
+    fun switchSortingState(isEnabled: Boolean) {
+        _listState.value = listState.value.copy(
+            isSortingEnabled = !isEnabled
+        )
+        Log.d(TAG, "switchSortingState: ${listState.value.isSortingEnabled}")
+    }
+
+    private fun sortListById() {
+        _networkState.setLoading()
+        val sortedList = detailsList.sortedBy {
+            it.id
+        }
+        _listState.value= listState.value.copy(
+            pokemonDetailsList = sortedList
+        )
+        _networkState.setSuccess()
+    }
+
+    private fun sortListByHp() {
+        _networkState.setLoading()
+        val sortedList = detailsList.sortedBy {
+            it.stats[HP].baseStat
+        }
+        _listState.value= listState.value.copy(
+            pokemonDetailsList = sortedList
+        )
+        _networkState.setSuccess()
+    }
+
+    private fun sortListByAttack() {
+        _networkState.setLoading()
+        val sortedList = detailsList.sortedBy {
+            it.stats[ATTACK].baseStat
+        }
+        _listState.value= listState.value.copy(
+            pokemonDetailsList = sortedList
+        )
+        _networkState.setSuccess()
+    }
+
+    private fun sortListByDefense() {
+        _networkState.setLoading()
+        val sortedList = detailsList.sortedBy {
+            it.stats[DEFENSE].baseStat
+        }
+        _listState.value= listState.value.copy(
+            pokemonDetailsList = sortedList
+        )
+        _networkState.setSuccess()
     }
 }
