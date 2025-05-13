@@ -36,33 +36,47 @@ class PokemonListViewModel(
         tryLoadingPokemonList()
     }
 
+    private fun addOffsetToList() {
+        _listState.value = listState.value.copy(
+            offset = listState.value.offset + listState.value.itemsPerPage
+        )
+    }
+
     fun tryLoadingPokemonList() {
         _networkState.setInitialLoading()
-        loadDetailedPokemonList(listState.value.pokemonDetailsList.size)
+        loadDetailedPokemonList()
+        addOffsetToList()
     }
 
     fun loadMoreItems() {
-        loadDetailedPokemonList(listState.value.pokemonDetailsList.size)
+        loadDetailedPokemonList()
+        addOffsetToList()
     }
 
     fun loadRandomizedList() {
         val minPokemonId = 0
         val maxPokemonId = 1302
-        /* subtract the max range so that there will always be enough items to load */
-        val randomEntryNumber = Random
+        /* subtract the max range so that the list doesn't loop during the first load */
+        val randomizedOffset = Random
             .nextInt(minPokemonId, maxPokemonId - listState.value.itemsPerPage)
 
+        _listState.value = listState.value.copy(
+            offset = randomizedOffset
+        )
         _networkState.setInitialLoading()
+
         detailsList.clear()
-        loadDetailedPokemonList(randomEntryNumber)
+
+        loadDetailedPokemonList()
+        addOffsetToList()
     }
 
-    private fun loadDetailedPokemonList(offset: Int) {
+    private fun loadDetailedPokemonList() {
         viewModelScope.launch {
             try {
                 val resultList = repository.getMultiplePokemon(
                     limit = listState.value.itemsPerPage,
-                    offset = offset
+                    offset = listState.value.offset
                 ).body() ?: throw IOException()
 
                 /* transforming url list into id list */

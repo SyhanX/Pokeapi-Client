@@ -4,7 +4,7 @@ import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_detai
 
 data class PokemonListState(
     val pokemonDetailsList: List<PokemonShortDetailsState> = emptyList(),
-    val initialOffset: Int = 0,
-    val itemsPerPage: Int = 30
+    val offset: Int = 0,
+    val itemsPerPage: Int = 10
 )
 
