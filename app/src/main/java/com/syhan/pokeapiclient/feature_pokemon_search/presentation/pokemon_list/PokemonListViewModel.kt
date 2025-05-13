@@ -101,7 +101,13 @@ class PokemonListViewModel(
                                     id = details.id,
                                     name = details.name.capitalizeFirstChar(),
                                     sprites = details.sprites,
-                                    types = details.types
+                                    types = details.types.map {
+                                        it.copy(
+                                            type = it.type.copy(
+                                                name = it.type.name.capitalizeFirstChar()
+                                            )
+                                        )
+                                    }
                                 )
                             )
                         }
@@ -136,7 +142,7 @@ class PokemonListViewModel(
         val sortedList = detailsList.sortedBy {
             it.id
         }
-        _listState.value= listState.value.copy(
+        _listState.value = listState.value.copy(
             pokemonDetailsList = sortedList
         )
         _networkState.setSuccess()
@@ -147,7 +153,7 @@ class PokemonListViewModel(
         val sortedList = detailsList.sortedBy {
             it.stats[HP].baseStat
         }
-        _listState.value= listState.value.copy(
+        _listState.value = listState.value.copy(
             pokemonDetailsList = sortedList
         )
         _networkState.setSuccess()
@@ -158,7 +164,7 @@ class PokemonListViewModel(
         val sortedList = detailsList.sortedBy {
             it.stats[ATTACK].baseStat
         }
-        _listState.value= listState.value.copy(
+        _listState.value = listState.value.copy(
             pokemonDetailsList = sortedList
         )
         _networkState.setSuccess()
@@ -169,7 +175,7 @@ class PokemonListViewModel(
         val sortedList = detailsList.sortedBy {
             it.stats[DEFENSE].baseStat
         }
-        _listState.value= listState.value.copy(
+        _listState.value = listState.value.copy(
             pokemonDetailsList = sortedList
         )
         _networkState.setSuccess()

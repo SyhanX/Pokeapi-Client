@@ -38,7 +38,7 @@ fun SortingMenu(
     DropdownMenu(
         expanded = isExpanded,
         onDismissRequest = onDismiss,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(15),
         border = BorderStroke(
             width = 1.dp,
             color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -120,7 +120,7 @@ fun SortingMenuBox(
                 contentDescription = null,
             )
         },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(30),
         trailingIcon = {
             if (isMenuExpanded) {
                 Icon(

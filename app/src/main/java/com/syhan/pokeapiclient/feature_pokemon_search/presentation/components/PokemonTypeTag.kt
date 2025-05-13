@@ -20,21 +20,20 @@ import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonTypeColor
 fun PokemonTypeTag(
     name: String,
     color: Color,
-    textModifier: Modifier = Modifier
 ) {
     Box(
         modifier = Modifier
             .background(
                 color = color,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(30)
             )
     ) {
         Text(
             text = name,
-            fontSize = 16.sp,
+            fontSize = 18.sp,
             color = Color.White,
             textAlign = TextAlign.Center,
-            modifier = textModifier
+            modifier = Modifier
                 .padding(5.dp)
         )
     }

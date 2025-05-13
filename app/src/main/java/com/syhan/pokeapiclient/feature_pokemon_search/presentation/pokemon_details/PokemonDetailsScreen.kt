@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -119,7 +118,7 @@ fun PokemonDetailsContent(
                                     } else typeColors
                                 ),
                                 width = 4.dp,
-                                shape = RoundedCornerShape(8.dp)
+                                shape = RoundedCornerShape(20)
                             )
                             .background(
                                 brush = Brush.linearGradient(
@@ -127,7 +126,7 @@ fun PokemonDetailsContent(
                                         listOf(typeColors[0], typeColors[0])
                                     } else typeColors
                                 ),
-                                shape = RoundedCornerShape(8.dp),
+                                shape = RoundedCornerShape(20),
                                 alpha = 0.25f
                             )
                     )
@@ -162,7 +161,9 @@ private fun BasicInfoCard(
     height: Int,
     weight: Int
 ) {
-    Card {
+    Card(
+        shape = RoundedCornerShape(15)
+    ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
@@ -210,7 +211,9 @@ private fun BasicInfoCard(
 private fun TypesCard(
     types: List<Type>
 ) {
-    Card {
+    Card(
+        shape = RoundedCornerShape(15)
+    ) {
         Column(
             modifier = Modifier
                 .padding(12.dp)
@@ -233,8 +236,6 @@ private fun TypesCard(
                     PokemonTypeTag(
                         name = type.type.name,
                         color = findTypeColor(type.type.name),
-                        textModifier = Modifier
-                            .width(100.dp)
                     )
                 }
             }
@@ -246,7 +247,9 @@ private fun TypesCard(
 private fun StatsCard(
     stats: List<Stat>
 ) {
-    Card {
+    Card(
+        shape = RoundedCornerShape(15)
+    ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier

@@ -4,15 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -52,55 +49,14 @@ fun PokemonCard(
     }
     Card(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
+        shape = RoundedCornerShape(20)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier
-                    .height(120.dp)
-                    .padding(
-                        vertical = 8.dp,
-                        horizontal = 8.dp
-                    )
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = name,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = "#${addLeadingZeros(id)}",
-                        fontSize = 18.sp,
-                        modifier = Modifier.alpha(0.75f)
-                    )
-                }
-                Spacer(Modifier.weight(1f))
-                FlowRow(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                ) {
-                    types.forEach { type ->
-                        val typeProperName = type.type.name.capitalizeFirstChar()
-
-                        PokemonTypeTag(
-                            name = typeProperName,
-                            color = findTypeColor(typeProperName)
-                        )
-                    }
-                }
-            }
-            Spacer(Modifier.weight(1f))
             AsyncImage(
                 model = sprite,
                 contentDescription = null,
@@ -113,7 +69,7 @@ fun PokemonCard(
                             } else typeColors
                         ),
                         width = 2.dp,
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(20)
                     )
                     .background(
                         brush = Brush.linearGradient(
@@ -121,11 +77,47 @@ fun PokemonCard(
                                 listOf(typeColors[0], typeColors[0])
                             } else typeColors
                         ),
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(20),
                         alpha = 0.15f
                     )
             )
-
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier
+                    .height(120.dp)
+                    .padding(
+                        vertical = 8.dp,
+                        horizontal = 12.dp
+                    )
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = name,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "#${addLeadingZeros(id)}",
+                        fontSize = 18.sp,
+                        modifier = Modifier.alpha(0.6f)
+                    )
+                }
+                Spacer(Modifier.weight(1f))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        types.forEach { type ->
+                            PokemonTypeTag(
+                                name = type.type.name,
+                                color = findTypeColor(type.type.name)
+                            )
+                        }
+                    }
+            }
         }
     }
 }
