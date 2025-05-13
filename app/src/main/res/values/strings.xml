@@ -17,4 +17,10 @@
     <string name="special_defense">Sp. def</string>
     <string name="pokemon_search">Pokémon search</string>
     <string name="randomize_list">Randomize</string>
+    <string name="hp">Hp</string>
+    <string name="attack">Attack</string>
+    <string name="defense">Defense</string>
+    <string name="sort_by">Sort by:</string>
+    <string name="action_expand">Expand</string>
+    <string name="action_collapse">Collapse</string>
 </resources>

@@ -1,10 +1,13 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
-import android.util.Log
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,10 +15,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -24,12 +36,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +57,7 @@ import com.syhan.pokeapiclient.common.data.NavDestinations
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import com.syhan.pokeapiclient.common.presentation.LoadingScreen
 import com.syhan.pokeapiclient.common.presentation.NetworkErrorScreen
+import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSorting
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonCard
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonShortDetailsState
 import org.koin.androidx.compose.koinViewModel
@@ -136,11 +155,12 @@ private fun PokemonList(
             (lastVisibleItem?.index != 0) && (lastVisibleItem?.index == (totalItemsCount - buffer))
         }
     }
+    var isMenuExpanded by remember { mutableStateOf(false) }
+    var selectedStat by rememberSaveable { mutableStateOf<PokemonSorting>(PokemonSorting.SortByNumber) }
 
     LaunchedEffect(reachedLoadingPoint) {
         if (reachedLoadingPoint) {
             loadMoreItems()
-            Log.d(TAG, "PokemonList: reached loading point")
         }
     }
 
@@ -153,7 +173,28 @@ private fun PokemonList(
             .animateContentSize()
     ) {
         item {
-            Spacer(Modifier)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                SortingMenuBox(
+                    isMenuExpanded = isMenuExpanded,
+                    statName = selectedStat.statName,
+                    statImage = selectedStat.statImage,
+                    onClick = {
+                        isMenuExpanded = !isMenuExpanded
+                    },
+                ) {
+                    SortingMenu(
+                        isExpanded = isMenuExpanded,
+                        onDismiss = { isMenuExpanded = false },
+                        onStatClick = {
+                            isMenuExpanded = false
+                            selectedStat = it
+                        }
+                    )
+                }
+            }
         }
         items(
             items = items,
@@ -182,4 +223,120 @@ private fun PokemonList(
             }
         }
     }
+}
+
+@Composable
+private fun SortingMenu(
+    isExpanded: Boolean,
+    onDismiss: () -> Unit,
+    onStatClick: (PokemonSorting) -> Unit
+) {
+    DropdownMenu(
+        expanded = isExpanded,
+        onDismissRequest = onDismiss,
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.onSecondaryContainer
+        ),
+        offset = DpOffset(x = 0.dp, y = 14.dp)
+    ) {
+        val sortingList = PokemonSorting.entries
+        sortingList.forEach { stat ->
+            DropdownMenuItem(
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(stat.statImage),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                },
+                text = {
+                    Text(
+                        text = stringResource(stat.statName),
+                        fontSize = 18.sp
+                    )
+                },
+                onClick = { onStatClick(stat) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun SortingMenuBox(
+    isMenuExpanded: Boolean,
+    @StringRes statName: Int,
+    @DrawableRes statImage: Int,
+    onClick: () -> Unit,
+    menu: @Composable (() -> Unit)
+) {
+    val colors = MaterialTheme.colorScheme
+    /* this isn't confusing at all */
+    OutlinedTextField(
+        colors = if (isMenuExpanded) {
+            OutlinedTextFieldDefaults.colors(
+                disabledContainerColor = colors.surfaceContainer,
+                disabledTrailingIconColor = colors.secondary,
+                disabledBorderColor = colors.onSurface,
+                disabledLeadingIconColor = colors.onSurface
+            )
+        } else {
+            OutlinedTextFieldDefaults.colors(
+                disabledContainerColor = colors.surfaceContainerLow,
+                disabledTrailingIconColor = colors.secondary,
+                disabledBorderColor = colors.secondaryContainer,
+                disabledLeadingIconColor = colors.secondary
+            )
+        },
+        prefix = {
+            Row {
+                Text(
+                    text = stringResource(R.string.sort_by) + " ",
+                    fontSize = 18.sp,
+                    color = colors.onSurfaceVariant,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = stringResource(statName),
+                    fontSize = 18.sp,
+                    color = colors.onSurface
+                )
+            }
+        },
+        value = "",
+        onValueChange = {},
+        textStyle = TextStyle(
+            color = colors.onSurface,
+            fontSize = 18.sp
+        ),
+        enabled = false,
+        leadingIcon = {
+            Icon(
+                painter = painterResource(statImage),
+                contentDescription = null,
+            )
+        },
+        shape = RoundedCornerShape(16.dp),
+        trailingIcon = {
+            if (isMenuExpanded) {
+                Icon(
+                    imageVector = Icons.Rounded.KeyboardArrowUp,
+                    contentDescription = stringResource(R.string.action_collapse)
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Rounded.KeyboardArrowDown,
+                    contentDescription = stringResource(R.string.action_expand)
+                )
+            }
+            menu()
+        },
+        modifier = Modifier
+            .clickable(
+                interactionSource = null,
+                indication = null
+            ) { onClick() }
+            .fillMaxWidth()
+    )
 }
