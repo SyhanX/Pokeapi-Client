@@ -22,7 +22,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -52,7 +51,7 @@ fun PokemonListScreen(
     navController: NavController,
 ) {
     val networkState by viewModel.networkState.collectAsStateWithLifecycle()
-    val listState by viewModel.listState.collectAsState()
+    val listState by viewModel.listState.collectAsStateWithLifecycle()
     when (networkState) {
         NetworkResponse.InitialLoading -> {
             LoadingScreen()

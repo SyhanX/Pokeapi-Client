@@ -18,13 +18,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,10 +32,8 @@ import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.syhan.pokeapiclient.R
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
-import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
 import com.syhan.pokeapiclient.common.presentation.LoadingScreen
 import com.syhan.pokeapiclient.common.presentation.NetworkErrorScreen
-import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Stat
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.addLeadingZeros
@@ -50,17 +48,17 @@ fun PokemonDetailsScreen(
     viewModel: PokemonDetailsViewModel = koinViewModel(),
     navController: NavHostController
 ) {
-    val state = viewModel.detailsState.collectAsStateWithLifecycle()
-    val networkState = viewModel.networkState.collectAsStateWithLifecycle()
+    val networkState by viewModel.networkState.collectAsStateWithLifecycle()
+    val detailsState by viewModel.detailsState.collectAsStateWithLifecycle()
 
-    when (networkState.value) {
+    when (networkState) {
         NetworkResponse.InitialLoading -> {
             LoadingScreen()
         }
 
         is NetworkResponse.Error -> {
             NetworkErrorScreen(
-                errorType = (networkState.value as NetworkResponse.Error).type,
+                errorType = (networkState as NetworkResponse.Error).type,
                 onRetry = {
                     /*TODO*/
                 }
@@ -69,10 +67,8 @@ fun PokemonDetailsScreen(
 
         NetworkResponse.Success -> {
             PokemonDetailsContent(
-                state = state.value,
-                navigateUp = {
-                    navController.navigateUp()
-                }
+                state = detailsState,
+                navigateUp = navController::navigateUp
             )
         }
     }
@@ -100,9 +96,7 @@ fun PokemonDetailsContent(
             item {
                 val typeColors = mutableListOf<Color>()
                 state.types.forEach {
-                    typeColors.add(
-                        findTypeColor(it.type.name.capitalizeFirstChar())
-                    )
+                    typeColors.add(findTypeColor(it.type.name))
                 }
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -135,55 +129,18 @@ fun PokemonDetailsContent(
                     )
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        text = state.name.capitalizeFirstChar(),
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.SemiBold
+                        text = state.name,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
             item {
-                Card {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth()
-                    ) {
-                        Column {
-                            Text(
-                                text = stringResource(R.string.national_number),
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 18.sp
-                            )
-                            Text(
-                                text = "#${addLeadingZeros(state.id)}",
-                                fontSize = 18.sp
-                            )
-                        }
-                        Column {
-                            Text(
-                                text = stringResource(R.string.height),
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 18.sp
-                            )
-                            Text(
-                                text = "${state.height / 10f} m",
-                                fontSize = 18.sp
-                            )
-                        }
-                        Column {
-                            Text(
-                                text = stringResource(R.string.weight),
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 18.sp
-                            )
-                            Text(
-                                text = "${state.weight / 10f} kg",
-                                fontSize = 18.sp
-                            )
-                        }
-                    }
-                }
+              BasicInfoCard(
+                  id = state.id,
+                  height = state.height,
+                  weight = state.weight
+              )
             }
             item {
                 TypesCard(state.types)
@@ -195,6 +152,55 @@ fun PokemonDetailsContent(
     }
 }
 
+@Composable
+private fun BasicInfoCard(
+    id: Int,
+    height: Int,
+    weight: Int
+) {
+    Card {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.national_number),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp
+                )
+                Text(
+                    text = "#${addLeadingZeros(id)}",
+                    fontSize = 18.sp
+                )
+            }
+            Column {
+                Text(
+                    text = stringResource(R.string.height),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp
+                )
+                Text(
+                    text = "${height / 10f} m",
+                    fontSize = 18.sp
+                )
+            }
+            Column {
+                Text(
+                    text = stringResource(R.string.weight),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp
+                )
+                Text(
+                    text = "${weight / 10f} kg",
+                    fontSize = 18.sp
+                )
+            }
+        }
+    }
+}
 
 @Composable
 private fun TypesCard(
@@ -220,10 +226,9 @@ private fun TypesCard(
                     .fillMaxWidth()
             ) {
                 types.forEach { type ->
-                    val capitalizedName = type.type.name.capitalizeFirstChar()
                     PokemonTypeTag(
-                        name = capitalizedName,
-                        color = findTypeColor(capitalizedName),
+                        name = type.type.name,
+                        color = findTypeColor(type.type.name),
                         textModifier = Modifier
                             .width(100.dp)
                     )
@@ -308,7 +313,7 @@ private fun StatsCard(
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = stats[4].baseStat.toString(),
+                        text = stats[2].baseStat.toString(),
                         fontSize = 18.sp,
                     )
                     Text(
@@ -323,13 +328,5 @@ private fun StatsCard(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun PokemonDetailsPreview() {
-    PokeapiClientTheme {
-/*        PokemonDetailsContent()*/
     }
 }

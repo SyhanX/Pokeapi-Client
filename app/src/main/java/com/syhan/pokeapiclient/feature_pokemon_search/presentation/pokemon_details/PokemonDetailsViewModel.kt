@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import com.syhan.pokeapiclient.common.domain.setHttpException
-import com.syhan.pokeapiclient.common.domain.setIoException
 import com.syhan.pokeapiclient.common.domain.setInitialLoading
+import com.syhan.pokeapiclient.common.domain.setIoException
 import com.syhan.pokeapiclient.common.domain.setSuccess
 import com.syhan.pokeapiclient.common.domain.setUnknownException
 import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
@@ -62,7 +62,13 @@ class PokemonDetailsViewModel(
                                 )
                             )
                         },
-                        types = it.types,
+                        types = it.types.map { type ->
+                            type.copy(
+                                type = type.type.copy(
+                                    name = type.type.name.capitalizeFirstChar()
+                                )
+                            )
+                        },
                         height = it.height,
                         weight = it.weight
                     )
