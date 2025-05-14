@@ -20,12 +20,11 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
-import com.syhan.pokeapiclient.common.presentation.theme.PokeapiClientTheme
+import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingType
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.addLeadingZeros
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.findTypeColor
@@ -37,14 +36,18 @@ fun PokemonCard(
     modifier: Modifier = Modifier,
     id: Int,
     name: String,
+    hpValue: Int,
+    attackValue: Int,
+    defenseValue: Int,
     sprite: String,
     types: List<Type>,
+    sortingType: PokemonSortingType,
     onClick: () -> Unit,
 ) {
     val typeColors = mutableListOf<Color>()
     types.forEach {
         typeColors.add(
-            findTypeColor(it.type.name.capitalizeFirstChar())
+            findTypeColor(it.type.name)
         )
     }
     Card(
@@ -91,47 +94,42 @@ fun PokemonCard(
                     )
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = name,
                         fontSize = 22.sp,
-                        fontWeight = FontWeight.SemiBold
+                        maxLines = 2,
+                        fontWeight = FontWeight.SemiBold,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(2f)
                     )
                     Text(
-                        text = "#${addLeadingZeros(id)}",
+                        text = when (sortingType) {
+                            PokemonSortingType.SortByNumber -> "#${addLeadingZeros(id)}"
+                            PokemonSortingType.SortByHp -> "$hpValue HP"
+                            PokemonSortingType.SortByAttack -> "$attackValue Atk."
+                            PokemonSortingType.SortByDefense -> "$defenseValue Def."
+                        },
                         fontSize = 18.sp,
-                        modifier = Modifier.alpha(0.6f)
+                        modifier = Modifier
+                            .alpha(0.6f)
+                            .weight(1f)
                     )
                 }
                 Spacer(Modifier.weight(1f))
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        types.forEach { type ->
-                            PokemonTypeTag(
-                                name = type.type.name,
-                                color = findTypeColor(type.type.name)
-                            )
-                        }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    types.forEach { type ->
+                        PokemonTypeTag(
+                            name = type.type.name,
+                            color = findTypeColor(type.type.name)
+                        )
                     }
+                }
             }
         }
-    }
-}
-
-@PreviewLightDark
-@Composable
-private fun PokemonCardPreview() {
-    PokeapiClientTheme {
-        PokemonCard(
-            id = 2,
-            name = "Pinkachu",
-            sprite = "3",
-            types = emptyList(),
-            onClick = {}
-        )
     }
 }

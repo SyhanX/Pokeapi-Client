@@ -1,6 +1,5 @@
 package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
@@ -10,6 +9,7 @@ import com.syhan.pokeapiclient.common.domain.setLoading
 import com.syhan.pokeapiclient.common.domain.setSuccess
 import com.syhan.pokeapiclient.common.domain.setUnknownException
 import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
+import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingType
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonShortDetailsState
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.ATTACK
@@ -101,6 +101,9 @@ class PokemonListViewModel(
                                     id = details.id,
                                     name = details.name.capitalizeFirstChar(),
                                     sprites = details.sprites,
+                                    hpValue = details.stats[HP].baseStat,
+                                    attackValue = details.stats[ATTACK].baseStat,
+                                    defenseValue = details.stats[DEFENSE].baseStat,
                                     types = details.types.map {
                                         it.copy(
                                             type = it.type.copy(
@@ -130,54 +133,30 @@ class PokemonListViewModel(
         }
     }
 
-    fun switchSortingState(isEnabled: Boolean) {
+    fun switchSortingMode(isEnabled: Boolean) {
         _listState.value = listState.value.copy(
-            isSortingEnabled = !isEnabled
+            isSortingEnabled = !isEnabled,
         )
-        Log.d(TAG, "switchSortingState: ${listState.value.isSortingEnabled}")
+        sortListByStat(PokemonSortingType.SortByNumber, true)
     }
 
-    private fun sortListById() {
-        _networkState.setLoading()
+    fun sortListByStat(type: PokemonSortingType, isAscending: Boolean) {
+        _listState.value = listState.value.copy(
+            sortingType = type,
+            sortOrderAscending = isAscending
+        )
         val sortedList = detailsList.sortedBy {
-            it.id
+            when (type) {
+                PokemonSortingType.SortByNumber -> it.id
+                PokemonSortingType.SortByHp -> it.hpValue
+                PokemonSortingType.SortByAttack -> it.attackValue
+                PokemonSortingType.SortByDefense -> it.defenseValue
+            }
+        }.let {
+            if (isAscending) it else it.reversed()
         }
         _listState.value = listState.value.copy(
             pokemonDetailsList = sortedList
         )
-        _networkState.setSuccess()
-    }
-
-    private fun sortListByHp() {
-        _networkState.setLoading()
-        val sortedList = detailsList.sortedBy {
-            it.stats[HP].baseStat
-        }
-        _listState.value = listState.value.copy(
-            pokemonDetailsList = sortedList
-        )
-        _networkState.setSuccess()
-    }
-
-    private fun sortListByAttack() {
-        _networkState.setLoading()
-        val sortedList = detailsList.sortedBy {
-            it.stats[ATTACK].baseStat
-        }
-        _listState.value = listState.value.copy(
-            pokemonDetailsList = sortedList
-        )
-        _networkState.setSuccess()
-    }
-
-    private fun sortListByDefense() {
-        _networkState.setLoading()
-        val sortedList = detailsList.sortedBy {
-            it.stats[DEFENSE].baseStat
-        }
-        _listState.value = listState.value.copy(
-            pokemonDetailsList = sortedList
-        )
-        _networkState.setSuccess()
     }
 }

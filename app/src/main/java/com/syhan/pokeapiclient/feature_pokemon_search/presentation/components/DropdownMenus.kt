@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -27,13 +29,15 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.syhan.pokeapiclient.R
-import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingAlgorithm
+import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingType
 
 @Composable
 fun SortingMenu(
     isExpanded: Boolean,
+    isAscending: Boolean,
     onDismiss: () -> Unit,
-    onSortingAlgSelect: (PokemonSortingAlgorithm) -> Unit
+    onSortingAlgSelect: (PokemonSortingType) -> Unit,
+    onSortingOrderSelect: (Boolean) -> Unit,
 ) {
     DropdownMenu(
         expanded = isExpanded,
@@ -45,7 +49,7 @@ fun SortingMenu(
         ),
         offset = DpOffset(x = 0.dp, y = 14.dp)
     ) {
-        PokemonSortingAlgorithm.entries.forEach { algorithm ->
+        PokemonSortingType.entries.forEach { algorithm ->
             DropdownMenuItem(
                 leadingIcon = {
                     Icon(
@@ -63,6 +67,43 @@ fun SortingMenu(
                 onClick = { onSortingAlgSelect(algorithm) }
             )
         }
+        HorizontalDivider()
+        DropdownMenuItem(
+            leadingIcon = {
+                if (isAscending) {
+                    Icon(
+                        imageVector = Icons.Rounded.Check,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            },
+            text = {
+                Text(
+                    text = "Ascending",
+                    fontSize = 18.sp
+                )
+            },
+            onClick = { onSortingOrderSelect(true) }
+        )
+        DropdownMenuItem(
+            leadingIcon = {
+                if (!isAscending) {
+                    Icon(
+                        imageVector = Icons.Rounded.Check,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            },
+            text = {
+                Text(
+                    text = "Descending",
+                    fontSize = 18.sp
+                )
+            },
+            onClick = { onSortingOrderSelect(false) }
+        )
     }
 }
 

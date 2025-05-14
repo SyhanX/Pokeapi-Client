@@ -9,7 +9,8 @@ data class PokemonDetailsShort(
     val id: Int,
     val name: String,
     val sprites: Sprites,
-    val types: List<Type>
+    val types: List<Type>,
+    val stats: List<Stat>
 )
 
 @Immutable

@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.syhan.pokeapiclient.R
 
-enum class PokemonSortingAlgorithm(
+enum class PokemonSortingType(
     @StringRes val selectedStatName: Int,
     @DrawableRes val selectedStatIcon: Int,
 ) {

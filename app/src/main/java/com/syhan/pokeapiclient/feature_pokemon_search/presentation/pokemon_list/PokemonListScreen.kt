@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,7 +41,7 @@ import com.syhan.pokeapiclient.common.data.NavDestinations
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import com.syhan.pokeapiclient.common.presentation.LoadingScreen
 import com.syhan.pokeapiclient.common.presentation.NetworkErrorScreen
-import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingAlgorithm
+import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingType
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonCard
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.RandomizeListAnimatedFAB
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.ScrollUpAnimatedFAB
@@ -74,18 +75,28 @@ fun PokemonListScreen(
         NetworkResponse.Success -> {
             PokemonListContent(
                 items = listState.pokemonDetailsList,
-                sortingAlg = listState.sorting,
+                sortingType = listState.sortingType,
                 isSortingEnabled = listState.isSortingEnabled,
+                isSortingAscending = listState.sortOrderAscending,
                 loadMoreItems = viewModel::loadMoreItems,
                 loadRandomizedList = viewModel::loadRandomizedList,
-                onCheckedChange = viewModel::switchSortingState,
+                onCheckedChange = viewModel::switchSortingMode,
                 onCardClick = { id ->
                     navController.navigate(
                         NavDestinations.PokemonDetailsScreen(id)
                     )
                 },
                 onStatSelect = {
-
+                    viewModel.sortListByStat(
+                        type = it,
+                        isAscending = listState.sortOrderAscending
+                    )
+                },
+                onSortingOrderSelect = {
+                    viewModel.sortListByStat(
+                        type = listState.sortingType,
+                        isAscending = it
+                    )
                 }
             )
         }
@@ -97,12 +108,14 @@ fun PokemonListScreen(
 fun PokemonListContent(
     items: List<PokemonShortDetailsState>,
     isSortingEnabled: Boolean,
-    sortingAlg: PokemonSortingAlgorithm,
+    sortingType: PokemonSortingType,
     onCardClick: (id: Int) -> Unit,
     loadRandomizedList: () -> Unit,
     loadMoreItems: () -> Unit,
-    onStatSelect: (PokemonSortingAlgorithm) -> Unit,
+    onStatSelect: (PokemonSortingType) -> Unit,
     onCheckedChange: (Boolean) -> Unit,
+    isSortingAscending: Boolean,
+    onSortingOrderSelect: (Boolean) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val lazyColumnState = rememberLazyListState()
@@ -138,14 +151,16 @@ fun PokemonListContent(
             modifier = Modifier.padding(innerPadding),
             items = items,
             lazyColumnState = lazyColumnState,
-            sortingAlg = sortingAlg,
+            sortingType = sortingType,
             isSortingEnabled = isSortingEnabled,
             onCardClick = { onCardClick(it) },
             loadMoreItems = loadMoreItems,
-            onSelectStat = { onStatSelect(it) },
+            onStatSelect = { onStatSelect(it) },
             onCheckedChange = {
                 onCheckedChange(!it)
-            }
+            },
+            onSortingOrderSelect = { onSortingOrderSelect(it) },
+            isSortingAscending = isSortingAscending
         )
     }
 }
@@ -156,11 +171,13 @@ private fun PokemonList(
     items: List<PokemonShortDetailsState>,
     lazyColumnState: LazyListState,
     isSortingEnabled: Boolean,
-    sortingAlg: PokemonSortingAlgorithm,
+    isSortingAscending: Boolean,
+    sortingType: PokemonSortingType,
     loadMoreItems: () -> Unit,
     onCardClick: (id: Int) -> Unit,
-    onSelectStat: (PokemonSortingAlgorithm) -> Unit,
+    onStatSelect: (PokemonSortingType) -> Unit,
     onCheckedChange: (Boolean) -> Unit,
+    onSortingOrderSelect: (Boolean) -> Unit,
 ) {
     val buffer = 1
     /* the point in the LazyColumn at which the loadMoreItems() will be triggered*/
@@ -212,8 +229,8 @@ private fun PokemonList(
                 ) {
                     SortingMenuBox(
                         isMenuExpanded = isMenuExpanded,
-                        statName = sortingAlg.selectedStatName,
-                        statIcon = sortingAlg.selectedStatIcon,
+                        statName = sortingType.selectedStatName,
+                        statIcon = sortingType.selectedStatIcon,
                         onClick = {
                             isMenuExpanded = !isMenuExpanded
                         },
@@ -224,7 +241,12 @@ private fun PokemonList(
                             onDismiss = { isMenuExpanded = false },
                             onSortingAlgSelect = {
                                 isMenuExpanded = false
-                                onSelectStat(it)
+                                onStatSelect(it)
+                            },
+                            isAscending = isSortingAscending,
+                            onSortingOrderSelect = {
+                                isMenuExpanded = false
+                                onSortingOrderSelect(it)
                             }
                         )
                     }
@@ -244,19 +266,30 @@ private fun PokemonList(
                 sprite = state.sprites.frontDefault.toString(),
                 types = state.types,
                 onClick = { onCardClick(state.id) },
+                sortingType = sortingType,
+                hpValue = state.hpValue,
+                defenseValue = state.defenseValue,
+                attackValue = state.attackValue,
                 modifier = Modifier.animateItem()
             )
         }
         item {
-            if (items.isNotEmpty() && !isSortingEnabled) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .height(60.dp)
-                        .fillMaxWidth()
-                ) {
+            if (items.isEmpty()) return@item
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .height(50.dp)
+                    .fillMaxWidth()
+            ) {
+                if (!isSortingEnabled) {
                     CircularProgressIndicator()
+                } else {
+                    Text(
+                        text = "Disable sorting mode\nto load more items",
+                        textAlign = TextAlign.Center,
+                        fontSize = 18.sp
+                    )
                 }
             }
         }

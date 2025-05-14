@@ -9,12 +9,11 @@ import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
 data class PokemonShortDetailsState(
     val id: Int = -1,
     val name: String = "",
-    val sprites: Sprites = Sprites(
-        frontDefault = null,
-        frontShiny = null
-    ),
+    val sprites: Sprites = Sprites(),
     val types: List<Type> = emptyList(),
-    val stats: List<Stat> = emptyList(),
+    val hpValue: Int,
+    val attackValue: Int,
+    val defenseValue: Int,
 )
 
 @Immutable
