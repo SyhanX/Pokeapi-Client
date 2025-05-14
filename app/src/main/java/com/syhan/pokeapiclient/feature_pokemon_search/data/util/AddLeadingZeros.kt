@@ -1,4 +1,4 @@
-package com.syhan.pokeapiclient.feature_pokemon_search.domain.util
+package com.syhan.pokeapiclient.feature_pokemon_search.data.util
 
 import android.annotation.SuppressLint
 
