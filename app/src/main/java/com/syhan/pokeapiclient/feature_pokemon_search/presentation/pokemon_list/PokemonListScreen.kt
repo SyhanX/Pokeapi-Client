@@ -45,8 +45,8 @@ import com.syhan.pokeapiclient.feature_pokemon_search.data.ListSortingType
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonCard
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.RandomizeListAnimatedFAB
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.ScrollUpAnimatedFAB
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.SortingMenu
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.SortingMenuBox
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.ChooseSortingDropdownMenu
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.ChooseSortingDropdownBox
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list.state.PokemonCardState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -229,7 +229,7 @@ private fun PokemonList(
                 AnimatedVisibility(
                     visible = isSortingEnabled
                 ) {
-                    SortingMenuBox(
+                    ChooseSortingDropdownBox(
                         isMenuExpanded = isMenuExpanded,
                         statName = sortingType.selectedStatName,
                         statIcon = sortingType.selectedStatIcon,
@@ -238,10 +238,10 @@ private fun PokemonList(
                         },
                         isSortingEnabled = isSortingEnabled
                     ) {
-                        SortingMenu(
-                            isExpanded = isMenuExpanded,
-                            onDismiss = { isMenuExpanded = false },
-                            onSortingAlgSelect = {
+                        ChooseSortingDropdownMenu(
+                            isMenuExpanded = isMenuExpanded,
+                            onDismissRequest = { isMenuExpanded = false },
+                            onSortingTypeSelect = {
                                 isMenuExpanded = false
                                 onStatSelect(it)
                             },

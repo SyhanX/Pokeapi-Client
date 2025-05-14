@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -32,16 +31,16 @@ import com.syhan.pokeapiclient.R
 import com.syhan.pokeapiclient.feature_pokemon_search.data.ListSortingType
 
 @Composable
-fun SortingMenu(
-    isExpanded: Boolean,
+fun ChooseSortingDropdownMenu(
+    isMenuExpanded: Boolean,
     isAscending: Boolean,
-    onDismiss: () -> Unit,
-    onSortingAlgSelect: (ListSortingType) -> Unit,
-    onSortingOrderSelect: (Boolean) -> Unit,
+    onDismissRequest: () -> Unit,
+    onSortingTypeSelect: (ListSortingType) -> Unit,
+    onSortingOrderSelect: (isAscending: Boolean) -> Unit,
 ) {
     DropdownMenu(
-        expanded = isExpanded,
-        onDismissRequest = onDismiss,
+        expanded = isMenuExpanded,
+        onDismissRequest = onDismissRequest,
         shape = RoundedCornerShape(15),
         border = BorderStroke(
             width = 1.dp,
@@ -49,22 +48,22 @@ fun SortingMenu(
         ),
         offset = DpOffset(x = 0.dp, y = 14.dp)
     ) {
-        ListSortingType.entries.forEach { algorithm ->
+        ListSortingType.entries.forEach { type ->
             DropdownMenuItem(
                 leadingIcon = {
                     Icon(
-                        painter = painterResource(algorithm.selectedStatIcon),
+                        painter = painterResource(type.selectedStatIcon),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 },
                 text = {
                     Text(
-                        text = stringResource(algorithm.selectedStatName),
+                        text = stringResource(type.selectedStatName),
                         fontSize = 18.sp
                     )
                 },
-                onClick = { onSortingAlgSelect(algorithm) }
+                onClick = { onSortingTypeSelect(type) }
             )
         }
         HorizontalDivider()
@@ -80,7 +79,7 @@ fun SortingMenu(
             },
             text = {
                 Text(
-                    text = "Ascending",
+                    text = stringResource(R.string.ascending),
                     fontSize = 18.sp
                 )
             },
@@ -98,7 +97,7 @@ fun SortingMenu(
             },
             text = {
                 Text(
-                    text = "Descending",
+                    text = stringResource(R.string.descending),
                     fontSize = 18.sp
                 )
             },
@@ -108,29 +107,29 @@ fun SortingMenu(
 }
 
 @Composable
-fun SortingMenuBox(
+fun ChooseSortingDropdownBox(
     @StringRes statName: Int,
     @DrawableRes statIcon: Int,
     isMenuExpanded: Boolean,
     isSortingEnabled: Boolean,
     onClick: () -> Unit,
-    menu: @Composable (() -> Unit)
+    dropdownMenu: @Composable (() -> Unit)
 ) {
-    val colors = MaterialTheme.colorScheme
+    val color = MaterialTheme.colorScheme
     OutlinedTextField(
         colors = if (isMenuExpanded) {
             OutlinedTextFieldDefaults.colors(
-                disabledContainerColor = colors.surfaceContainer,
-                disabledTrailingIconColor = colors.secondary,
-                disabledBorderColor = colors.onSurface,
-                disabledLeadingIconColor = colors.onSurface
+                disabledContainerColor = color.surfaceContainer,
+                disabledTrailingIconColor = color.secondary,
+                disabledBorderColor = color.onSurface,
+                disabledLeadingIconColor = color.onSurface
             )
         } else {
             OutlinedTextFieldDefaults.colors(
-                disabledContainerColor = colors.surfaceContainerLow,
-                disabledTrailingIconColor = colors.secondary,
-                disabledBorderColor = colors.secondaryContainer,
-                disabledLeadingIconColor = colors.secondary
+                disabledContainerColor = color.surfaceContainerLow,
+                disabledTrailingIconColor = color.secondary,
+                disabledBorderColor = color.secondaryContainer,
+                disabledLeadingIconColor = color.secondary
             )
         },
         prefix = {
@@ -138,22 +137,18 @@ fun SortingMenuBox(
                 Text(
                     text = stringResource(R.string.sort_by) + " ",
                     fontSize = 18.sp,
-                    color = colors.onSurfaceVariant,
+                    color = color.onSurfaceVariant,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
                     text = stringResource(statName),
                     fontSize = 18.sp,
-                    color = colors.onSurface
+                    color = color.onSurface
                 )
             }
         },
         value = "",
         onValueChange = {},
-        textStyle = TextStyle(
-            color = colors.onSurface,
-            fontSize = 18.sp
-        ),
         enabled = false,
         leadingIcon = {
             Icon(
@@ -174,7 +169,7 @@ fun SortingMenuBox(
                     contentDescription = stringResource(R.string.action_expand)
                 )
             }
-            menu()
+            dropdownMenu()
         },
         modifier = Modifier
             .fillMaxWidth()
