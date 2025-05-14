@@ -3,11 +3,11 @@ package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
-import com.syhan.pokeapiclient.common.domain.setHttpException
-import com.syhan.pokeapiclient.common.domain.setIoException
-import com.syhan.pokeapiclient.common.domain.setLoading
-import com.syhan.pokeapiclient.common.domain.setSuccess
-import com.syhan.pokeapiclient.common.domain.setUnknownException
+import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setHttpException
+import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setIoException
+import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setLoading
+import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setSuccess
+import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setUnknownException
 import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
 import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingType
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
