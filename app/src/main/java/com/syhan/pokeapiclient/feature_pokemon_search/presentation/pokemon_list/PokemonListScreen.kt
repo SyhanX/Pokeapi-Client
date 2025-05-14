@@ -78,6 +78,7 @@ fun PokemonListScreen(
                 sortingType = listState.sortingType,
                 isSortingEnabled = listState.isSortingEnabled,
                 isSortingAscending = listState.sortOrderAscending,
+                isRandomizingEnabled = listState.isRandomizingEnabled,
                 loadMoreItems = viewModel::loadMoreItems,
                 loadRandomizedList = viewModel::loadRandomizedList,
                 onCheckedChange = viewModel::switchSortingMode,
@@ -115,6 +116,7 @@ fun PokemonListContent(
     onStatSelect: (PokemonSortingType) -> Unit,
     onCheckedChange: (Boolean) -> Unit,
     isSortingAscending: Boolean,
+    isRandomizingEnabled: Boolean,
     onSortingOrderSelect: (Boolean) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -138,7 +140,7 @@ fun PokemonListContent(
                     }
                 )
                 RandomizeListAnimatedFAB(
-                    isVisible = !isSortingEnabled,
+                    isVisible = !isSortingEnabled && isRandomizingEnabled,
                     onClick = loadRandomizedList
                 )
             }

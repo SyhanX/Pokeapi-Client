@@ -77,6 +77,9 @@ class PokemonListViewModel(
 
     private fun loadDetailedPokemonList() {
         viewModelScope.launch {
+            _listState.value = listState.value.copy(
+                isRandomizingEnabled = false
+            )
             try {
                 val resultList = repository.getMultiplePokemon(
                     limit = listState.value.itemsPerPage,
@@ -129,6 +132,10 @@ class PokemonListViewModel(
                 _networkState.setHttpException(e)
             } catch (e: Exception) {
                 _networkState.setUnknownException(e)
+            } finally {
+                _listState.value = listState.value.copy(
+                    isRandomizingEnabled = true
+                )
             }
         }
     }

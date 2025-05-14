@@ -7,6 +7,7 @@ data class PokemonListState(
     val pokemonDetailsList: List<PokemonShortDetailsState> = emptyList(),
     val offset: Int = 0,
     val itemsPerPage: Int = 30,
+    val isRandomizingEnabled: Boolean = true,
     val isSortingEnabled: Boolean = false,
     val sortingType: PokemonSortingType = PokemonSortingType.SortByNumber,
     val sortOrderAscending: Boolean = true
