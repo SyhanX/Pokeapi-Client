@@ -25,4 +25,5 @@
     <string name="action_collapse">Collapse</string>
     <string name="ascending">Ascending</string>
     <string name="descending">Descending</string>
+    <string name="action_scroll_up">Scroll up</string>
 </resources>

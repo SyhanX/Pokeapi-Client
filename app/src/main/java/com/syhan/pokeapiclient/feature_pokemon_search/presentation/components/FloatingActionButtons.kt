@@ -40,7 +40,7 @@ fun ScrollUpAnimatedFAB(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_up),
-                contentDescription = null
+                contentDescription = stringResource(R.string.action_scroll_up)
             )
         }
     }
