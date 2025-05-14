@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingType
+import com.syhan.pokeapiclient.feature_pokemon_search.data.ListSortingType
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.addLeadingZeros
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.findTypeColor
@@ -41,7 +41,7 @@ fun PokemonCard(
     defenseValue: Int,
     sprite: String,
     types: List<Type>,
-    sortingType: PokemonSortingType,
+    sortingType: ListSortingType,
     onClick: () -> Unit,
 ) {
     val typeColors = mutableListOf<Color>()
@@ -107,10 +107,10 @@ fun PokemonCard(
                     )
                     Text(
                         text = when (sortingType) {
-                            PokemonSortingType.SortByNumber -> "#${addLeadingZeros(id)}"
-                            PokemonSortingType.SortByHp -> "$hpValue HP"
-                            PokemonSortingType.SortByAttack -> "$attackValue Atk."
-                            PokemonSortingType.SortByDefense -> "$defenseValue Def."
+                            ListSortingType.SortByNumber -> "#${addLeadingZeros(id)}"
+                            ListSortingType.SortByHp -> "$hpValue HP"
+                            ListSortingType.SortByAttack -> "$attackValue Atk."
+                            ListSortingType.SortByDefense -> "$defenseValue Def."
                         },
                         fontSize = 18.sp,
                         modifier = Modifier

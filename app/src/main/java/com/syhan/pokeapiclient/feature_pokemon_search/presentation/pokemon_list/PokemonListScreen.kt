@@ -41,7 +41,7 @@ import com.syhan.pokeapiclient.common.data.NavDestinations
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import com.syhan.pokeapiclient.common.presentation.LoadingScreen
 import com.syhan.pokeapiclient.common.presentation.NetworkErrorScreen
-import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingType
+import com.syhan.pokeapiclient.feature_pokemon_search.data.ListSortingType
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonCard
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.RandomizeListAnimatedFAB
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.ScrollUpAnimatedFAB
@@ -109,11 +109,11 @@ fun PokemonListScreen(
 fun PokemonListContent(
     items: List<PokemonCardState>,
     isSortingEnabled: Boolean,
-    sortingType: PokemonSortingType,
+    sortingType: ListSortingType,
     onCardClick: (id: Int) -> Unit,
     loadRandomizedList: () -> Unit,
     loadMoreItems: () -> Unit,
-    onStatSelect: (PokemonSortingType) -> Unit,
+    onStatSelect: (ListSortingType) -> Unit,
     onCheckedChange: (Boolean) -> Unit,
     isSortingAscending: Boolean,
     isRandomizingEnabled: Boolean,
@@ -174,10 +174,10 @@ private fun PokemonList(
     lazyColumnState: LazyListState,
     isSortingEnabled: Boolean,
     isSortingAscending: Boolean,
-    sortingType: PokemonSortingType,
+    sortingType: ListSortingType,
     loadMoreItems: () -> Unit,
     onCardClick: (id: Int) -> Unit,
-    onStatSelect: (PokemonSortingType) -> Unit,
+    onStatSelect: (ListSortingType) -> Unit,
     onCheckedChange: (Boolean) -> Unit,
     onSortingOrderSelect: (Boolean) -> Unit,
 ) {

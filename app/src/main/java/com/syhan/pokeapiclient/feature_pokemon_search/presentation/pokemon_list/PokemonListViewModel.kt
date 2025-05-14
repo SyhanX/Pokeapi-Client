@@ -9,11 +9,11 @@ import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setLoading
 import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setSuccess
 import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setUnknownException
 import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
-import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingType
+import com.syhan.pokeapiclient.feature_pokemon_search.data.ListSortingType
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.ATTACK
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.DEFENSE
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.HP
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.ATTACK
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.DEFENSE
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.HP
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list.state.PokemonCardState
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list.state.PokemonListState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -145,20 +145,20 @@ class PokemonListViewModel(
         _listState.value = listState.value.copy(
             isSortingEnabled = !isEnabled,
         )
-        sortListByStat(PokemonSortingType.SortByNumber, true)
+        sortListByStat(ListSortingType.SortByNumber, true)
     }
 
-    fun sortListByStat(type: PokemonSortingType, isAscending: Boolean) {
+    fun sortListByStat(type: ListSortingType, isAscending: Boolean) {
         _listState.value = listState.value.copy(
             sortingType = type,
             sortOrderAscending = isAscending
         )
         val sortedList = detailsList.sortedBy {
             when (type) {
-                PokemonSortingType.SortByNumber -> it.id
-                PokemonSortingType.SortByHp -> it.hpValue
-                PokemonSortingType.SortByAttack -> it.attackValue
-                PokemonSortingType.SortByDefense -> it.defenseValue
+                ListSortingType.SortByNumber -> it.id
+                ListSortingType.SortByHp -> it.hpValue
+                ListSortingType.SortByAttack -> it.attackValue
+                ListSortingType.SortByDefense -> it.defenseValue
             }
         }.let {
             if (isAscending) it else it.reversed()

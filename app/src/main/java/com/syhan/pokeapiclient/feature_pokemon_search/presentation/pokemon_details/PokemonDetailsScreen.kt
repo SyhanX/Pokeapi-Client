@@ -33,17 +33,17 @@ import com.syhan.pokeapiclient.R
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import com.syhan.pokeapiclient.common.presentation.LoadingScreen
 import com.syhan.pokeapiclient.common.presentation.NetworkErrorScreen
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.ATTACK
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.DEFENSE
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.HP
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.SPECIAL_ATTACK
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.SPECIAL_DEFENSE
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.SPEED
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Stat
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.addLeadingZeros
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.findTypeColor
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonTypeTag
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.ATTACK
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.DEFENSE
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.HP
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.SPECIAL_ATTACK
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.SPECIAL_DEFENSE
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.SPEED
 import org.koin.androidx.compose.koinViewModel
 
 private const val TAG = "PokemonDetailsScreen"

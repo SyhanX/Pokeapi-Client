@@ -29,14 +29,14 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.syhan.pokeapiclient.R
-import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingType
+import com.syhan.pokeapiclient.feature_pokemon_search.data.ListSortingType
 
 @Composable
 fun SortingMenu(
     isExpanded: Boolean,
     isAscending: Boolean,
     onDismiss: () -> Unit,
-    onSortingAlgSelect: (PokemonSortingType) -> Unit,
+    onSortingAlgSelect: (ListSortingType) -> Unit,
     onSortingOrderSelect: (Boolean) -> Unit,
 ) {
     DropdownMenu(
@@ -49,7 +49,7 @@ fun SortingMenu(
         ),
         offset = DpOffset(x = 0.dp, y = 14.dp)
     ) {
-        PokemonSortingType.entries.forEach { algorithm ->
+        ListSortingType.entries.forEach { algorithm ->
             DropdownMenuItem(
                 leadingIcon = {
                     Icon(
