@@ -42,7 +42,7 @@ import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.SP
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Stat
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.addLeadingZeros
-import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.findTypeColor
+import com.syhan.pokeapiclient.feature_pokemon_search.data.findTypeColor
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonTypeTag
 import org.koin.androidx.compose.koinViewModel
 

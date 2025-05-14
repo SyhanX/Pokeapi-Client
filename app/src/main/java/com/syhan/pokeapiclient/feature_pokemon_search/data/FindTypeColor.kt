@@ -1,7 +1,6 @@
-package com.syhan.pokeapiclient.feature_pokemon_search.domain.util
+package com.syhan.pokeapiclient.feature_pokemon_search.data
 
 import androidx.compose.ui.graphics.Color
-import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonTypeColor
 
 fun findTypeColor(typeName: String): Color {
     val colorHexCode = PokemonTypeColor.entries.find {

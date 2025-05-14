@@ -27,7 +27,7 @@ import coil3.compose.AsyncImage
 import com.syhan.pokeapiclient.feature_pokemon_search.data.ListSortingType
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.addLeadingZeros
-import com.syhan.pokeapiclient.feature_pokemon_search.domain.util.findTypeColor
+import com.syhan.pokeapiclient.feature_pokemon_search.data.findTypeColor
 
 private const val TAG = "PokemonCard"
 
