@@ -9,5 +9,5 @@ data class PokemonListState(
     val isRandomizingEnabled: Boolean = true,
     val isSortingEnabled: Boolean = false,
     val sortingType: ListSortingType = ListSortingType.SortByNumber,
-    val sortOrderAscending: Boolean = true
+    val isSortOrderAscending: Boolean = true
 )

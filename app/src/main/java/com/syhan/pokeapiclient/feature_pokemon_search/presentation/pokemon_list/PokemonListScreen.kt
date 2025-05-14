@@ -42,11 +42,11 @@ import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import com.syhan.pokeapiclient.common.presentation.LoadingScreen
 import com.syhan.pokeapiclient.common.presentation.NetworkErrorScreen
 import com.syhan.pokeapiclient.feature_pokemon_search.data.ListSortingType
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.ChooseSortingDropdownBox
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.ChooseSortingDropdownMenu
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonCard
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.RandomizeListAnimatedFAB
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.ScrollUpAnimatedFAB
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.ChooseSortingDropdownMenu
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.ChooseSortingDropdownBox
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list.state.PokemonCardState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -68,7 +68,11 @@ fun PokemonListScreen(
         is NetworkResponse.Error -> {
             NetworkErrorScreen(
                 errorType = (networkState as NetworkResponse.Error).type,
-                onRetry = viewModel::tryLoadingPokemonList
+                onRetry = {
+                    if (listState.pokemonDetailsList.isEmpty()) {
+                        viewModel.tryLoadingInitialItems()
+                    } else viewModel.tryLoadingMoreItems()
+                }
             )
         }
 
@@ -77,9 +81,9 @@ fun PokemonListScreen(
                 items = listState.pokemonDetailsList,
                 sortingType = listState.sortingType,
                 isSortingEnabled = listState.isSortingEnabled,
-                isSortingAscending = listState.sortOrderAscending,
+                isSortingAscending = listState.isSortOrderAscending,
                 isRandomizingEnabled = listState.isRandomizingEnabled,
-                loadMoreItems = viewModel::loadMoreItems,
+                loadMoreItems = viewModel::tryLoadingMoreItems,
                 loadRandomizedList = viewModel::loadRandomizedList,
                 onCheckedChange = viewModel::switchSortingMode,
                 onCardClick = { id ->
@@ -90,7 +94,7 @@ fun PokemonListScreen(
                 onStatSelect = {
                     viewModel.sortListByStat(
                         type = it,
-                        isAscending = listState.sortOrderAscending
+                        isAscending = listState.isSortOrderAscending
                     )
                 },
                 onSortingOrderSelect = {

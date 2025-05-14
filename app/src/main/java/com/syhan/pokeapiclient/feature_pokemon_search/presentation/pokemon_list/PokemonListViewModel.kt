@@ -38,24 +38,32 @@ class PokemonListViewModel(
     private val detailsList = mutableSetOf<PokemonCardState>()
 
     init {
-        tryLoadingPokemonList()
+        tryLoadingInitialItems()
     }
 
-    private fun addOffsetToList() {
+    private fun addToOffsetValue() {
         _listState.value = listState.value.copy(
             offset = listState.value.offset + listState.value.itemsPerPage
         )
     }
 
-    fun tryLoadingPokemonList() {
-        _networkState.setLoading()
-        loadDetailedPokemonList()
-        addOffsetToList()
+    private fun resetOffset() {
+        _listState.value = listState.value.copy(
+            offset = 0
+        )
     }
 
-    fun loadMoreItems() {
+    fun tryLoadingInitialItems() {
+        _networkState.setLoading()
+        resetOffset()
+        detailsList.clear()
         loadDetailedPokemonList()
-        addOffsetToList()
+        addToOffsetValue()
+    }
+
+    fun tryLoadingMoreItems() {
+        loadDetailedPokemonList()
+        addToOffsetValue()
     }
 
     fun loadRandomizedList() {
@@ -73,7 +81,7 @@ class PokemonListViewModel(
         detailsList.clear()
 
         loadDetailedPokemonList()
-        addOffsetToList()
+        addToOffsetValue()
     }
 
     private fun loadDetailedPokemonList() {
@@ -151,7 +159,7 @@ class PokemonListViewModel(
     fun sortListByStat(type: ListSortingType, isAscending: Boolean) {
         _listState.value = listState.value.copy(
             sortingType = type,
-            sortOrderAscending = isAscending
+            isSortOrderAscending = isAscending
         )
         val sortedList = detailsList.sortedBy {
             when (type) {
