@@ -1,10 +1,9 @@
-package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
+package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list.state
 
 import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingType
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonShortDetailsState
 
 data class PokemonListState(
-    val pokemonDetailsList: List<PokemonShortDetailsState> = emptyList(),
+    val pokemonDetailsList: List<PokemonCardState> = emptyList(),
     val offset: Int = 0,
     val itemsPerPage: Int = 30,
     val isRandomizingEnabled: Boolean = true,
@@ -12,4 +11,3 @@ data class PokemonListState(
     val sortingType: PokemonSortingType = PokemonSortingType.SortByNumber,
     val sortOrderAscending: Boolean = true
 )
-

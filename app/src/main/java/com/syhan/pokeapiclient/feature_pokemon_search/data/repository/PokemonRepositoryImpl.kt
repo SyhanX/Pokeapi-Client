@@ -6,10 +6,10 @@ import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonR
 class PokemonRepositoryImpl(
     private val api: PokemonApi
 ) : PokemonRepository {
-    override suspend fun getShortPokemonById(id: Int) = api.getShortPokemonById(id)
+    override suspend fun getPokemonById(id: Int) = api.getPokemonById(id)
 
-    override suspend fun getFullPokemonById(id: Int) = api.getFullPokemonById(id)
-
-    override suspend fun getMultiplePokemon(limit: Int, offset: Int) =
-        api.getMultiplePokemon(limit, offset)
+    override suspend fun getPokemonList(
+        limit: Int,
+        offset: Int
+    ) = api.getMultiplePokemon(limit, offset)
 }

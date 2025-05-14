@@ -1,7 +1,6 @@
 package com.syhan.pokeapiclient.common.data.remote
 
-import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.PokemonDetailsFull
-import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.PokemonDetailsShort
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.PokemonDetails
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.PokemonResultList
 import retrofit2.Response
 import retrofit2.http.GET
@@ -10,14 +9,9 @@ import retrofit2.http.Query
 
 interface PokemonApi {
     @GET("/api/v2/pokemon/{id}/")
-    suspend fun getShortPokemonById(
+    suspend fun getPokemonById(
         @Path("id") id: Int,
-    ) : Response<PokemonDetailsShort>
-
-    @GET("/api/v2/pokemon/{id}/")
-    suspend fun getFullPokemonById(
-        @Path("id") id: Int,
-    ) : Response<PokemonDetailsFull>
+    ) : Response<PokemonDetails>
 
     @GET("/api/v2/pokemon/")
     suspend fun getMultiplePokemon(

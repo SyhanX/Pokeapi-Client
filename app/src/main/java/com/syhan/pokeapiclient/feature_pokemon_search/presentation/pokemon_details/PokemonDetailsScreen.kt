@@ -79,7 +79,7 @@ fun PokemonDetailsScreen(
 
 @Composable
 fun PokemonDetailsContent(
-    state: PokemonFullDetailsState,
+    state: PokemonDetailsState,
     navigateUp: () -> Unit,
 ) {
     Scaffold(

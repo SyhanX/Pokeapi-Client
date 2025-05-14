@@ -11,10 +11,11 @@ import com.syhan.pokeapiclient.common.domain.setUnknownException
 import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
 import com.syhan.pokeapiclient.feature_pokemon_search.data.PokemonSortingType
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonShortDetailsState
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.ATTACK
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.DEFENSE
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonStats.HP
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list.state.PokemonCardState
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list.state.PokemonListState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -34,7 +35,7 @@ class PokemonListViewModel(
     private val _networkState = MutableStateFlow<NetworkResponse>(NetworkResponse.Loading)
     val networkState = _networkState.asStateFlow()
 
-    private val detailsList = mutableSetOf<PokemonShortDetailsState>()
+    private val detailsList = mutableSetOf<PokemonCardState>()
 
     init {
         tryLoadingPokemonList()
@@ -81,7 +82,7 @@ class PokemonListViewModel(
                 isRandomizingEnabled = false
             )
             try {
-                val resultList = repository.getMultiplePokemon(
+                val resultList = repository.getPokemonList(
                     limit = listState.value.itemsPerPage,
                     offset = listState.value.offset
                 ).body() ?: throw IOException()
@@ -96,11 +97,11 @@ class PokemonListViewModel(
 
                 pokemonIdList.forEach { id ->
                     repository
-                        .getShortPokemonById(id)
+                        .getPokemonById(id)
                         .body()
                         ?.let { details ->
                             detailsList.add(
-                                PokemonShortDetailsState(
+                                PokemonCardState(
                                     id = details.id,
                                     name = details.name.capitalizeFirstChar(),
                                     sprites = details.sprites,

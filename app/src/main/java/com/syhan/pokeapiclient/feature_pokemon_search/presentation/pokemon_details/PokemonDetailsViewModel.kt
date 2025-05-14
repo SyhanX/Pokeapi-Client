@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import com.syhan.pokeapiclient.common.domain.setHttpException
-import com.syhan.pokeapiclient.common.domain.setLoading
 import com.syhan.pokeapiclient.common.domain.setIoException
+import com.syhan.pokeapiclient.common.domain.setLoading
 import com.syhan.pokeapiclient.common.domain.setSuccess
 import com.syhan.pokeapiclient.common.domain.setUnknownException
 import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
@@ -24,7 +24,7 @@ class PokemonDetailsViewModel(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _detailsState = MutableStateFlow(PokemonFullDetailsState())
+    private val _detailsState = MutableStateFlow(PokemonDetailsState())
     val detailsState = _detailsState.asStateFlow()
 
     private val _networkState =
@@ -49,7 +49,7 @@ class PokemonDetailsViewModel(
         viewModelScope.launch {
             _networkState.setLoading()
             try {
-                val response = repository.getFullPokemonById(id)
+                val response = repository.getPokemonById(id)
                 response.body()?.let {
                     _detailsState.value = detailsState.value.copy(
                         id = it.id,

@@ -15,7 +15,7 @@ data class PokemonDetailsShort(
 
 @Immutable
 @Serializable
-data class PokemonDetailsFull(
+data class PokemonDetails(
     val id: Int,
     val name: String,
     val height: Int,

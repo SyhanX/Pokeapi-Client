@@ -47,7 +47,7 @@ import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.Ra
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.ScrollUpAnimatedFAB
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.SortingMenu
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.SortingMenuBox
-import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_details.PokemonShortDetailsState
+import com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list.state.PokemonCardState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -107,7 +107,7 @@ fun PokemonListScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokemonListContent(
-    items: List<PokemonShortDetailsState>,
+    items: List<PokemonCardState>,
     isSortingEnabled: Boolean,
     sortingType: PokemonSortingType,
     onCardClick: (id: Int) -> Unit,
@@ -170,7 +170,7 @@ fun PokemonListContent(
 @Composable
 private fun PokemonList(
     modifier: Modifier = Modifier,
-    items: List<PokemonShortDetailsState>,
+    items: List<PokemonCardState>,
     lazyColumnState: LazyListState,
     isSortingEnabled: Boolean,
     isSortingAscending: Boolean,
@@ -260,7 +260,7 @@ private fun PokemonList(
         }
         items(
             items = items,
-            key = { pokemon: PokemonShortDetailsState -> pokemon.id }
+            key = { pokemon: PokemonCardState -> pokemon.id }
         ) { state ->
             PokemonCard(
                 id = state.id,

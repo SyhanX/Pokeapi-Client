@@ -6,18 +6,7 @@ import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Stat
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
 
 @Immutable
-data class PokemonShortDetailsState(
-    val id: Int = -1,
-    val name: String = "",
-    val sprites: Sprites = Sprites(),
-    val types: List<Type> = emptyList(),
-    val hpValue: Int,
-    val attackValue: Int,
-    val defenseValue: Int,
-)
-
-@Immutable
-data class PokemonFullDetailsState(
+data class PokemonDetailsState(
     val id: Int = -1,
     val name: String = "",
     val height: Int = 0,
