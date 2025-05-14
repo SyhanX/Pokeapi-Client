@@ -55,13 +55,8 @@ class PokemonDetailsViewModel(
                         id = it.id,
                         name = it.name.capitalizeFirstChar(),
                         sprites = it.sprites,
-                        stats = it.stats.map { stat ->
-                            stat.copy(
-                                stat = stat.stat.copy(
-                                    name = stat.stat.name.capitalizeFirstChar()
-                                )
-                            )
-                        },
+                        height = it.height,
+                        weight = it.weight,
                         types = it.types.map { type ->
                             type.copy(
                                 type = type.type.copy(
@@ -69,8 +64,13 @@ class PokemonDetailsViewModel(
                                 )
                             )
                         },
-                        height = it.height,
-                        weight = it.weight
+                        stats = it.stats.map { stat ->
+                            stat.copy(
+                                stat = stat.stat.copy(
+                                    name = stat.stat.name.capitalizeFirstChar()
+                                )
+                            )
+                        },
                     )
                     _networkState.setSuccess()
                 }

@@ -33,16 +33,17 @@ import com.syhan.pokeapiclient.R
 import com.syhan.pokeapiclient.common.domain.NetworkResponse
 import com.syhan.pokeapiclient.common.presentation.LoadingScreen
 import com.syhan.pokeapiclient.common.presentation.NetworkErrorScreen
+import com.syhan.pokeapiclient.feature_pokemon_search.data.util.addLeadingZeros
+import com.syhan.pokeapiclient.feature_pokemon_search.data.util.findTypeColor
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.ATTACK
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.DEFENSE
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.HP
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.SPECIAL_ATTACK
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.SPECIAL_DEFENSE
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.SPEED
+import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Sprites
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Stat
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.model.Type
-import com.syhan.pokeapiclient.feature_pokemon_search.data.util.addLeadingZeros
-import com.syhan.pokeapiclient.feature_pokemon_search.data.util.findTypeColor
 import com.syhan.pokeapiclient.feature_pokemon_search.presentation.components.PokemonTypeTag
 import org.koin.androidx.compose.koinViewModel
 
@@ -97,46 +98,11 @@ fun PokemonDetailsContent(
                 .fillMaxSize()
         ) {
             item {
-                val typeColors = mutableListOf<Color>()
-                state.types.forEach {
-                    typeColors.add(findTypeColor(it.type.name))
-                }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    AsyncImage(
-                        model = state.sprites.frontDefault,
-                        contentDescription = state.name,
-                        modifier = Modifier
-                            .size(200.dp)
-                            .border(
-                                brush = Brush.linearGradient(
-                                    colors = if (typeColors.size <= 1) {
-                                        listOf(typeColors[0], typeColors[0])
-                                    } else typeColors
-                                ),
-                                width = 4.dp,
-                                shape = RoundedCornerShape(20)
-                            )
-                            .background(
-                                brush = Brush.linearGradient(
-                                    colors = if (typeColors.size <= 1) {
-                                        listOf(typeColors[0], typeColors[0])
-                                    } else typeColors
-                                ),
-                                shape = RoundedCornerShape(20),
-                                alpha = 0.25f
-                            )
-                    )
-                    Spacer(Modifier.height(12.dp))
-                    Text(
-                        text = state.name,
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+              PokemonImageAndName(
+                  name = state.name,
+                  types = state.types,
+                  sprites = state.sprites
+              )
             }
             item {
               BasicInfoCard(
@@ -152,6 +118,54 @@ fun PokemonDetailsContent(
                 StatsCard(state.stats)
             }
         }
+    }
+}
+
+@Composable
+private fun PokemonImageAndName(
+    name: String,
+    types: List<Type>,
+    sprites: Sprites
+) {
+    val typeColors = mutableListOf<Color>()
+    types.forEach {
+        typeColors.add(findTypeColor(it.type.name))
+    }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        AsyncImage(
+            model = sprites.frontDefault,
+            contentDescription = name,
+            modifier = Modifier
+                .size(200.dp)
+                .border(
+                    brush = Brush.linearGradient(
+                        colors = if (typeColors.size <= 1) {
+                            listOf(typeColors[0], typeColors[0])
+                        } else typeColors
+                    ),
+                    width = 4.dp,
+                    shape = RoundedCornerShape(20)
+                )
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = if (typeColors.size <= 1) {
+                            listOf(typeColors[0], typeColors[0])
+                        } else typeColors
+                    ),
+                    shape = RoundedCornerShape(20),
+                    alpha = 0.25f
+                )
+        )
+        Spacer(Modifier.height(12.dp))
+        Text(
+            text = name,
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -208,9 +222,7 @@ private fun BasicInfoCard(
 }
 
 @Composable
-private fun TypesCard(
-    types: List<Type>
-) {
+private fun TypesCard(types: List<Type>) {
     Card(
         shape = RoundedCornerShape(15)
     ) {
@@ -244,9 +256,7 @@ private fun TypesCard(
 }
 
 @Composable
-private fun StatsCard(
-    stats: List<Stat>
-) {
+private fun StatsCard(stats: List<Stat>) {
     Card(
         shape = RoundedCornerShape(15)
     ) {
