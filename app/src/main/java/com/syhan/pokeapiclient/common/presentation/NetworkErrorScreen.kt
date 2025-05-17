@@ -38,9 +38,12 @@ fun NetworkErrorScreen(
             fontSize = 20.sp,
             text = stringResource(
                 when (errorType) {
-                    NetworkErrorType.NoInternetError -> R.string.no_internet
-                    NetworkErrorType.UnknownError -> R.string.unknown_error
-                    NetworkErrorType.UnexpectedNetworkError -> R.string.http_error
+                    NetworkErrorType.NoInternet -> {
+                        R.string.no_internet
+                    }
+                    NetworkErrorType.UnexpectedHttpResponse -> {
+                        R.string.unexpected_error
+                    }
                 }
             )
         )

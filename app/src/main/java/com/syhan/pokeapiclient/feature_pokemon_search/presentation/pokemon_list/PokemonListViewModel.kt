@@ -2,12 +2,10 @@ package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.syhan.pokeapiclient.common.domain.NetworkResponse
-import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setHttpException
-import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setIoException
-import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setLoading
-import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setSuccess
-import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setUnknownException
+import com.syhan.pokeapiclient.common.domain.NetworkRequestState
+import com.syhan.pokeapiclient.common.domain.NetworkRequestStateHandler.setError
+import com.syhan.pokeapiclient.common.domain.NetworkRequestStateHandler.setLoading
+import com.syhan.pokeapiclient.common.domain.NetworkRequestStateHandler.setSuccess
 import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
 import com.syhan.pokeapiclient.feature_pokemon_search.data.ListSortingType
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.PokemonStatIndex.ATTACK
@@ -20,7 +18,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import okio.IOException
-import retrofit2.HttpException
 import kotlin.random.Random
 
 private const val TAG = "PokemonListViewModel"
@@ -32,7 +29,7 @@ class PokemonListViewModel(
     private val _listState = MutableStateFlow(PokemonListState())
     val listState = _listState.asStateFlow()
 
-    private val _networkState = MutableStateFlow<NetworkResponse>(NetworkResponse.Loading)
+    private val _networkState = MutableStateFlow<NetworkRequestState>(NetworkRequestState.Loading)
     val networkState = _networkState.asStateFlow()
 
     private val detailsList = mutableSetOf<PokemonCardState>()
@@ -135,12 +132,8 @@ class PokemonListViewModel(
                     pokemonDetailsList = detailsList.toList(),
                 )
                 _networkState.setSuccess()
-            } catch (e: IOException) {
-                _networkState.setIoException(e)
-            } catch (e: HttpException) {
-                _networkState.setHttpException(e)
             } catch (e: Exception) {
-                _networkState.setUnknownException(e)
+                _networkState.setError(e)
             } finally {
                 _listState.value = listState.value.copy(
                     isRandomizingEnabled = true

@@ -3,19 +3,15 @@ package com.syhan.pokeapiclient.feature_pokemon_search.presentation.pokemon_deta
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.syhan.pokeapiclient.common.domain.NetworkResponse
-import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setHttpException
-import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setIoException
-import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setLoading
-import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setSuccess
-import com.syhan.pokeapiclient.common.domain.NetworkStateHandler.setUnknownException
+import com.syhan.pokeapiclient.common.domain.NetworkRequestState
+import com.syhan.pokeapiclient.common.domain.NetworkRequestStateHandler.setError
+import com.syhan.pokeapiclient.common.domain.NetworkRequestStateHandler.setLoading
+import com.syhan.pokeapiclient.common.domain.NetworkRequestStateHandler.setSuccess
 import com.syhan.pokeapiclient.common.domain.util.capitalizeFirstChar
 import com.syhan.pokeapiclient.feature_pokemon_search.domain.repository.PokemonRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import okio.IOException
-import retrofit2.HttpException
 
 private const val TAG = "PokemonDetailsViewModel"
 
@@ -28,7 +24,7 @@ class PokemonDetailsViewModel(
     val detailsState = _detailsState.asStateFlow()
 
     private val _networkState =
-        MutableStateFlow<NetworkResponse>(NetworkResponse.Loading)
+        MutableStateFlow<NetworkRequestState>(NetworkRequestState.Loading)
     val networkState = _networkState.asStateFlow()
 
     private val currentPokemonId = savedStateHandle.get<Int>("currentPokemonId")
@@ -74,12 +70,8 @@ class PokemonDetailsViewModel(
                     )
                     _networkState.setSuccess()
                 }
-            } catch (e: IOException) {
-                _networkState.setIoException(e)
-            } catch (e: HttpException) {
-                _networkState.setHttpException(e)
             } catch (e: Exception) {
-                _networkState.setUnknownException(e)
+                _networkState.setError(e)
             }
         }
     }

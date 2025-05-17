@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.syhan.pokeapiclient.common.data.NavDestinations
-import com.syhan.pokeapiclient.common.domain.NetworkResponse
+import com.syhan.pokeapiclient.common.domain.NetworkRequestState
 import com.syhan.pokeapiclient.common.presentation.LoadingScreen
 import com.syhan.pokeapiclient.common.presentation.NetworkErrorScreen
 import com.syhan.pokeapiclient.feature_pokemon_search.data.ListSortingType
@@ -61,13 +61,13 @@ fun PokemonListScreen(
     val networkState by viewModel.networkState.collectAsStateWithLifecycle()
     val listState by viewModel.listState.collectAsStateWithLifecycle()
     when (networkState) {
-        NetworkResponse.Loading -> {
+        NetworkRequestState.Loading -> {
             LoadingScreen()
         }
 
-        is NetworkResponse.Error -> {
+        is NetworkRequestState.Error -> {
             NetworkErrorScreen(
-                errorType = (networkState as NetworkResponse.Error).type,
+                errorType = (networkState as NetworkRequestState.Error).type,
                 onRetry = {
                     if (listState.pokemonDetailsList.isEmpty()) {
                         viewModel.tryLoadingInitialItems()
@@ -76,7 +76,7 @@ fun PokemonListScreen(
             )
         }
 
-        NetworkResponse.Success -> {
+        NetworkRequestState.Success -> {
             PokemonListContent(
                 items = listState.pokemonDetailsList,
                 sortingType = listState.sortingType,

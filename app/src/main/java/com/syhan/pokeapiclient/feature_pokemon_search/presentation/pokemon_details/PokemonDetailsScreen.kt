@@ -30,7 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.syhan.pokeapiclient.R
-import com.syhan.pokeapiclient.common.domain.NetworkResponse
+import com.syhan.pokeapiclient.common.domain.NetworkRequestState
 import com.syhan.pokeapiclient.common.presentation.LoadingScreen
 import com.syhan.pokeapiclient.common.presentation.NetworkErrorScreen
 import com.syhan.pokeapiclient.feature_pokemon_search.data.util.addLeadingZeros
@@ -58,18 +58,18 @@ fun PokemonDetailsScreen(
     val detailsState by viewModel.detailsState.collectAsStateWithLifecycle()
 
     when (networkState) {
-        NetworkResponse.Loading -> {
+        NetworkRequestState.Loading -> {
             LoadingScreen()
         }
 
-        is NetworkResponse.Error -> {
+        is NetworkRequestState.Error -> {
             NetworkErrorScreen(
-                errorType = (networkState as NetworkResponse.Error).type,
+                errorType = (networkState as NetworkRequestState.Error).type,
                 onRetry = viewModel::tryLoadingData
             )
         }
 
-        NetworkResponse.Success -> {
+        NetworkRequestState.Success -> {
             PokemonDetailsContent(
                 state = detailsState,
                 navigateUp = navController::navigateUp
